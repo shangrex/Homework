@@ -9,7 +9,6 @@ void th(){
 int main(){
     clock_t start, end;
     int thread_num;
-    cin >> thread_num;
     fstream file_in("input.txt",ios::in);
     if(file_in){
         start = clock();

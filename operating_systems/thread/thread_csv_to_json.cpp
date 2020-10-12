@@ -33,13 +33,14 @@ int main(){
         string s;
         file_out << "{\n";
 
-        for(int i = 0;; i++){
-            if(file_in.eof()){
-                getline(file_in, s);
+        for(int i = 0;!file_in.eof(); i++){
+        
+            getline(file_in, s);
 
-                thread mthread(th, s, ref(file_out) );
-                mthread.join();
-            }
+            thread mthread(th, s, ref(file_out) );
+            mthread.join();
+            cout << "thread " << i << " finish." << endl;
+        
         }
         file_out << "]";
         end = clock();
