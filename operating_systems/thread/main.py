@@ -15,12 +15,15 @@ def job():
             #print(col_name)
         start = time.time()
         df = pd.read_csv(file_in, names=s, delimiter='|')
-        ans_json = df.to_json()
-        print("csv to json time ",time.time()-start)
-        print(ans_json)
-    file = open("output.json", "w")
-    file.write(ans_json)
-    file.close()
+        print(df)
+    #     ans_json = df.to_json()
+    #     print("csv to json time ",time.time()-start)
+    #     print(ans_json)
+    # file = open("output.json", "w")
+    # file.write(ans_json)
+    # file.close()
+
+
 if __name__ == "__main__":
     start = time.time()
     t = threading.Thread(target = job)
