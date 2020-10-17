@@ -8,7 +8,6 @@ using namespace std;
 mutex mu;
 void consumer(int *array, int batch_pos, int batch_size, fstream&file_out, int array_size){
     cout << batch_pos << endl;
-    mu.lock();
     for(int i = 0; i < batch_size/20; i+=1){
         if(batch_pos+i*20+20 > array_size)break;
         if(batch_pos != 0 || i != 0){
@@ -22,7 +21,6 @@ void consumer(int *array, int batch_pos, int batch_size, fstream&file_out, int a
         file_out << "}\n";
     }
     
-    mu.unlock();
 }
 int main(){
     clock_t start, end;
@@ -60,8 +58,6 @@ int main(){
         thread producer[thread_num];
         for(int i = 0; i < thread_num; i++){
             producer[i] = thread(consumer, array, batch_size*i, batch_size, ref(file_out), array_size);
-        }
-        for(int i = 0; i < thread_num; i++){
             producer[i].join();
         }
         file_out << "]";
