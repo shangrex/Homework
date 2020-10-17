@@ -3,9 +3,7 @@
 #include <bits/stdc++.h>
 #include <time.h>
 using namespace std;
-void th(){
-    
-}
+
 int main(){
     clock_t start, end;
     int thread_num;

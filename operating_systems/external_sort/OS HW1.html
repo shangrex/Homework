@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        OS HW1 - HackMD
+    </title>
+    <link rel="icon" type="image/png" href="https://hackmd.io/favicon.png">
+    <link rel="apple-touch-icon" href="https://hackmd.io/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css" integrity="sha256-QiWfLIsCT02Sdwkogf6YMiQlj4NE84MKkzEMkZnMGdg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@hackmd/emojify.js@2.1.0/dist/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <style>
+        @charset "UTF-8";@import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);.hljs{display:block;background:#fff;padding:.5em;color:#333;overflow-x:auto}.hljs-comment,.hljs-meta{color:#969896}.hljs-emphasis,.hljs-quote,.hljs-string,.hljs-strong,.hljs-template-variable,.hljs-variable{color:#df5000}.hljs-keyword,.hljs-selector-tag,.hljs-type{color:#a71d5d}.hljs-attribute,.hljs-bullet,.hljs-literal,.hljs-number,.hljs-symbol{color:#0086b3}.hljs-built_in,.hljs-builtin-name{color:#005cc5}.hljs-name,.hljs-section{color:#63a35c}.hljs-tag{color:#333}.hljs-attr,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-title{color:#795da3}.hljs-addition{color:#55a532;background-color:#eaffea}.hljs-deletion{color:#bd2c00;background-color:#ffecec}.hljs-link{text-decoration:underline}.markdown-body{font-size:16px;line-height:1.5;word-wrap:break-word}.markdown-body:after,.markdown-body:before{display:table;content:""}.markdown-body:after{clear:both}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body .absent{color:#c00}.markdown-body .anchor{float:left;padding-right:4px;margin-left:-20px;line-height:1}.markdown-body .anchor:focus{outline:none}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-top:0;margin-bottom:16px}.markdown-body hr{height:.25em;padding:0;margin:24px 0;background-color:#e7e7e7;border:0}.markdown-body blockquote{font-size:16px;padding:0 1em;color:#777;border-left:.25em solid #ddd}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body kbd,.popover kbd{display:inline-block;padding:3px 5px;font-size:11px;line-height:10px;color:#555;vertical-align:middle;background-color:#fcfcfc;border:1px solid #ccc;border-bottom-color:#bbb;border-radius:3px;box-shadow:inset 0 -1px 0 #bbb}.markdown-body .loweralpha{list-style-type:lower-alpha}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{color:#000;vertical-align:middle;visibility:hidden}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{text-decoration:none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{visibility:visible}.markdown-body h1 code,.markdown-body h1 tt,.markdown-body h2 code,.markdown-body h2 tt,.markdown-body h3 code,.markdown-body h3 tt,.markdown-body h4 code,.markdown-body h4 tt,.markdown-body h5 code,.markdown-body h5 tt,.markdown-body h6 code,.markdown-body h6 tt{font-size:inherit}.markdown-body h1{font-size:2em}.markdown-body h1,.markdown-body h2{padding-bottom:.3em;border-bottom:1px solid #eee}.markdown-body h2{font-size:1.5em}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{font-size:.85em;color:#777}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol.no-list,.markdown-body ul.no-list{padding:0;list-style-type:none}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-top:0;margin-bottom:0}.markdown-body li>p{margin-top:16px}.markdown-body li+li{padding-top:.25em}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}.markdown-body dl dd{padding:0 16px;margin-bottom:16px}.markdown-body table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}.markdown-body table th{font-weight:700}.markdown-body table td,.markdown-body table th{padding:6px 13px;border:1px solid #ddd}.markdown-body table tr{background-color:#fff;border-top:1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color:#f8f8f8}.markdown-body img{max-width:100%;box-sizing:content-box;background-color:#fff}.markdown-body img[align=right]{padding-left:20px}.markdown-body img[align=left]{padding-right:20px}.markdown-body .emoji{max-width:none;vertical-align:text-top;background-color:transparent}.markdown-body span.frame{display:block;overflow:hidden}.markdown-body span.frame>span{display:block;float:left;width:auto;padding:7px;margin:13px 0 0;overflow:hidden;border:1px solid #ddd}.markdown-body span.frame span img{display:block;float:left}.markdown-body span.frame span span{display:block;padding:5px 0 0;clear:both;color:#333}.markdown-body span.align-center{display:block;overflow:hidden;clear:both}.markdown-body span.align-center>span{display:block;margin:13px auto 0;overflow:hidden;text-align:center}.markdown-body span.align-center span img{margin:0 auto;text-align:center}.markdown-body span.align-right{display:block;overflow:hidden;clear:both}.markdown-body span.align-right>span{display:block;margin:13px 0 0;overflow:hidden;text-align:right}.markdown-body span.align-right span img{margin:0;text-align:right}.markdown-body span.float-left{display:block;float:left;margin-right:13px;overflow:hidden}.markdown-body span.float-left span{margin:13px 0 0}.markdown-body span.float-right{display:block;float:right;margin-left:13px;overflow:hidden}.markdown-body span.float-right>span{display:block;margin:13px auto 0;overflow:hidden;text-align:right}.markdown-body code,.markdown-body tt{padding:0;padding-top:.2em;padding-bottom:.2em;margin:0;font-size:85%;background-color:rgba(0,0,0,.04);border-radius:3px}.markdown-body code:after,.markdown-body code:before,.markdown-body tt:after,.markdown-body tt:before{letter-spacing:-.2em;content:"\00a0"}.markdown-body code br,.markdown-body tt br{display:none}.markdown-body del code{text-decoration:inherit}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:transparent;border:0}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#f7f7f7;border-radius:3px}.markdown-body pre code,.markdown-body pre tt{display:inline;max-width:auto;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}.markdown-body pre code:after,.markdown-body pre code:before,.markdown-body pre tt:after,.markdown-body pre tt:before{content:normal}.markdown-body .csv-data td,.markdown-body .csv-data th{padding:5px;overflow:hidden;font-size:12px;line-height:1;text-align:left;white-space:nowrap}.markdown-body .csv-data .blob-line-num{padding:10px 8px 9px;text-align:right;background:#fff;border:0}.markdown-body .csv-data tr{border-top:0}.markdown-body .csv-data th{font-weight:700;background:#f8f8f8;border-top:0}.news .alert .markdown-body blockquote{padding:0 0 0 40px;border:0 none}.activity-tab .news .alert .commits,.activity-tab .news .markdown-body blockquote{padding-left:0}.task-list-item{list-style-type:none}.task-list-item label{font-weight:400}.task-list-item.enabled label{cursor:pointer}.task-list-item+.task-list-item{margin-top:3px}.task-list-item-checkbox{float:left;margin:.31em 0 .2em -1.3em!important;vertical-align:middle;cursor:default!important}.markdown-body{padding-top:40px;padding-bottom:40px;max-width:758px;overflow:visible!important;position:relative}.markdown-body .emoji{vertical-align:top}.markdown-body pre{border:inherit!important}.markdown-body code{color:inherit!important}.markdown-body pre code .wrapper{display:-moz-inline-flex;display:-ms-inline-flex;display:-o-inline-flex;display:inline-flex}.markdown-body pre code .gutter{float:left;overflow:hidden;-webkit-user-select:none;user-select:none}.markdown-body pre code .gutter.linenumber{text-align:right;position:relative;display:inline-block;cursor:default;z-index:4;padding:0 8px 0 0;min-width:20px;box-sizing:content-box;color:#afafaf!important;border-right:3px solid #6ce26c!important}.markdown-body pre code .gutter.linenumber>span:before{content:attr(data-linenumber)}.markdown-body pre code .code{float:left;margin:0 0 0 16px}.markdown-body .gist .line-numbers{border-left:none;border-top:none;border-bottom:none}.markdown-body .gist .line-data{border:none}.markdown-body .gist table{border-spacing:0;border-collapse:inherit!important}.markdown-body code[data-gist-id]{background:none;padding:0}.markdown-body code[data-gist-id]:after,.markdown-body code[data-gist-id]:before{content:""}.markdown-body code[data-gist-id] .blob-num{border:unset}.markdown-body code[data-gist-id] table{overflow:unset;margin-bottom:unset}.markdown-body code[data-gist-id] table tr{background:unset}.markdown-body[dir=rtl] pre{direction:ltr}.markdown-body[dir=rtl] code{direction:ltr;unicode-bidi:embed}.markdown-body .alert>p{margin-bottom:0}.markdown-body pre.abc,.markdown-body pre.flow-chart,.markdown-body pre.graphviz,.markdown-body pre.mermaid,.markdown-body pre.sequence-diagram,.markdown-body pre.vega{text-align:center;background-color:inherit;border-radius:0;white-space:inherit;overflow:visible}.markdown-body pre.abc>code,.markdown-body pre.flow-chart>code,.markdown-body pre.graphviz>code,.markdown-body pre.mermaid>code,.markdown-body pre.sequence-diagram>code,.markdown-body pre.vega>code{text-align:left}.markdown-body pre.abc>svg,.markdown-body pre.flow-chart>svg,.markdown-body pre.graphviz>svg,.markdown-body pre.mermaid>svg,.markdown-body pre.sequence-diagram>svg,.markdown-body pre.vega>svg{max-width:100%;height:100%}.markdown-body pre>code.wrap{white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word}.markdown-body .alert>p,.markdown-body .alert>ul{margin-bottom:0}.markdown-body summary{display:list-item}.markdown-body summary:focus{outline:none}.markdown-body details summary{cursor:pointer}.markdown-body details:not([open])>:not(summary){display:none}.markdown-body figure{margin:1em 40px}.markdown-body .mark,.markdown-body mark{background-color:#fff1a7}.vimeo,.youtube{cursor:pointer;display:table;text-align:center;background-position:50%;background-repeat:no-repeat;background-size:contain;background-color:#000;overflow:hidden}.vimeo,.youtube{position:relative;width:100%}.youtube{padding-bottom:56.25%}.vimeo img{width:100%;object-fit:contain;z-index:0}.youtube img{object-fit:cover;z-index:0}.vimeo iframe,.youtube iframe,.youtube img{width:100%;height:100%;position:absolute;top:0;left:0}.vimeo iframe,.youtube iframe{vertical-align:middle;z-index:1}.vimeo .icon,.youtube .icon{position:absolute;height:auto;width:auto;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;opacity:.3;transition:opacity .2s;z-index:0}.vimeo:hover .icon,.youtube:hover .icon{opacity:.6;transition:opacity .2s}.slideshare .inner,.speakerdeck .inner{position:relative;width:100%}.slideshare .inner iframe,.speakerdeck .inner iframe{position:absolute;top:0;bottom:0;left:0;right:0;width:100%;height:100%}.MJX_Assistive_MathML{display:none}#MathJax_Message{z-index:1000!important}.ui-infobar{position:relative;z-index:2;max-width:760px;margin:25px auto -25px;color:#777}.toc .invisable-node{list-style-type:none}.ui-toc{position:fixed;bottom:20px;z-index:998}.ui-toc.both-mode{margin-left:8px}.ui-toc.both-mode .ui-toc-label{height:40px;padding:10px 4px;border-top-left-radius:0;border-bottom-left-radius:0}.ui-toc-label{background-color:#e6e6e6;border:none;color:#868686;transition:opacity .2s}.ui-toc .open .ui-toc-label{opacity:1;color:#fff;transition:opacity .2s}.ui-toc-label:focus{opacity:.3;background-color:#ccc;color:#000}.ui-toc-label:hover{opacity:1;background-color:#ccc;transition:opacity .2s}.ui-toc-dropdown{margin-top:20px;margin-bottom:20px;padding-left:10px;padding-right:10px;max-width:45vw;width:25vw;max-height:70vh;overflow:auto;text-align:inherit}.ui-toc-dropdown>.toc{max-height:calc(70vh - 100px);overflow:auto}.ui-toc-dropdown[dir=rtl] .nav{padding-right:0;letter-spacing:.0029em}.ui-toc-dropdown a{overflow:hidden;text-overflow:ellipsis;white-space:pre}.ui-toc-dropdown .nav>li>a{display:block;padding:4px 20px;font-size:13px;font-weight:500;color:#767676}.ui-toc-dropdown .nav>li:first-child:last-child > ul,.ui-toc-dropdown .toc.expand ul{display:block}.ui-toc-dropdown .nav>li>a:focus,.ui-toc-dropdown .nav>li>a:hover{padding-left:19px;color:#000;text-decoration:none;background-color:transparent;border-left:1px solid #000}.ui-toc-dropdown[dir=rtl] .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav>li>a:hover{padding-right:19px;border-left:none;border-right:1px solid #000}.ui-toc-dropdown .nav>.active:focus>a,.ui-toc-dropdown .nav>.active:hover>a,.ui-toc-dropdown .nav>.active>a{padding-left:18px;font-weight:700;color:#000;background-color:transparent;border-left:2px solid #000}.ui-toc-dropdown[dir=rtl] .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav>.active>a{padding-right:18px;border-left:none;border-right:2px solid #000}.ui-toc-dropdown .nav .nav{display:none;padding-bottom:10px}.ui-toc-dropdown .nav>.active>ul{display:block}.ui-toc-dropdown .nav .nav>li>a{padding-top:1px;padding-bottom:1px;padding-left:30px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a{padding-right:30px}.ui-toc-dropdown .nav .nav>li>ul>li>a{padding-top:1px;padding-bottom:1px;padding-left:40px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a{padding-right:40px}.ui-toc-dropdown .nav .nav>li>a:focus,.ui-toc-dropdown .nav .nav>li>a:hover{padding-left:29px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:hover{padding-right:29px}.ui-toc-dropdown .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown .nav .nav>li>ul>li>a:hover{padding-left:39px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:hover{padding-right:39px}.ui-toc-dropdown .nav .nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>a{padding-left:28px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>a{padding-right:28px}.ui-toc-dropdown .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active>a{padding-left:38px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active>a{padding-right:38px}.markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif}html[lang^=ja] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html .markdown-body[lang^=ja]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html .markdown-body[lang=zh-tw]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html .markdown-body[lang=zh-cn]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html[lang^=ja] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html[lang=zh-tw] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html[lang=zh-cn] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}html .ui-toc-dropdown[lang^=ja]{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html .ui-toc-dropdown[lang=zh-tw]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html .ui-toc-dropdown[lang=zh-cn]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}.ui-affix-toc{position:fixed;top:0;max-width:15vw;max-height:70vh;overflow:auto}.back-to-top,.expand-toggle,.go-to-bottom{display:block;padding:4px 10px;margin-top:10px;margin-left:10px;font-size:12px;font-weight:500;color:#999}.back-to-top:focus,.back-to-top:hover,.expand-toggle:focus,.expand-toggle:hover,.go-to-bottom:focus,.go-to-bottom:hover{color:#563d7c;text-decoration:none}.back-to-top,.go-to-bottom{margin-top:0}.ui-user-icon{width:20px;height:20px;display:block;border-radius:3px;margin-top:2px;margin-bottom:2px;margin-right:5px;background-position:50%;background-repeat:no-repeat;background-size:cover}.ui-user-icon.small{width:18px;height:18px;display:inline-block;vertical-align:middle;margin:0 0 .2em}.ui-infobar>small>span{line-height:22px}.ui-infobar>small .dropdown{display:inline-block}.ui-infobar>small .dropdown a:focus,.ui-infobar>small .dropdown a:hover{text-decoration:none}.ui-published-note{color:#337ab7}.ui-published-note .fa{font-size:20px;vertical-align:top}.unselectable{-webkit-user-select:none;-o-user-select:none;user-select:none}.selectable{-webkit-user-select:text;-o-user-select:text;user-select:text}@media print{blockquote,div,img,pre,table{page-break-inside:avoid!important}a[href]:after{font-size:12px!important}}.markdown-body.slides{position:relative;z-index:1;color:#222}.markdown-body.slides:before{content:"";display:block;position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;background-color:currentColor;box-shadow:0 0 0 50vw}.markdown-body.slides section[data-markdown]{position:relative;margin-bottom:1.5em;background-color:#fff;text-align:center}.markdown-body.slides section[data-markdown] code{text-align:left}.markdown-body.slides section[data-markdown]:before{content:"";display:block;padding-bottom:56.23%}.markdown-body.slides section[data-markdown]>div:first-child{position:absolute;top:50%;left:1em;right:1em;transform:translateY(-50%);max-height:100%;overflow:hidden}.markdown-body.slides section[data-markdown]>ul{display:inline-block}.markdown-body.slides>section>section+section:after{content:"";position:absolute;top:-1.5em;right:1em;height:1.5em;border:3px solid #777}.site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}body{font-smoothing:subpixel-antialiased!important;-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;text-shadow:0 0 1em transparent,1px 1px 1.2px rgba(0,0,0,.004);-webkit-overflow-scrolling:touch;letter-spacing:.025em;font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] body{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}abbr[data-original-title],abbr[title]{cursor:help}body.modal-open{overflow-y:auto;padding-right:0!important}
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="doc" class="markdown-body container-fluid comment-inner comment-enabled" data-hard-breaks="true" style=""><h1 id="OS-HW1" data-id="OS-HW1"><a class="anchor hidden-xs" href="#OS-HW1" title="OS-HW1"><span class="octicon octicon-link"></span></a><span>OS HW1</span></h1><ul data-original-title="" title="">
+<li><span>學號：F74072138</span></li>
+<li><span>姓名：黃上睿</span></li>
+<li><span>系級：資訊111</span></li>
+</ul><h2 id="開發環境：" data-id="開發環境："><a class="anchor hidden-xs" href="#開發環境：" title="開發環境："><span class="octicon octicon-link"></span></a><span>開發環境：</span></h2><ol>
+<li>
+<p><span>OS: Ubuntu 18.04</span></p>
+</li>
+<li>
+<p><span>CPU:Intel® Core™ i7-7700HQ CPU @ 2.80GHz(4 core 8 thread)</span></p>
+</li>
+<li>
+<p><span>Ｍemory:</span></p>
+<ul>
+<li><span>Mem: 23935 MB</span></li>
+<li><span>swap: 8000 MB</span></li>
+</ul>
+</li>
+<li>
+<p><span>Programming Language(version):</span><br>
+<span>g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0</span></p>
+</li>
+<li>
+<p><span>GPU: GTX 1060(6G)</span></p>
+</li>
+<li>
+<p><span>cache:</span></p>
+<ul>
+<li><span>cache size	: 6144 KB</span></li>
+<li><span>cache_alignment	: 64</span></li>
+<li><span>cached read: 8804.95 MB/sec</span></li>
+<li><span>L1d cache:   32K</span></li>
+<li><span>L1i cache:   32K</span></li>
+<li><span>L2 cache:    256K</span></li>
+<li><span>L3 cache:    6144K</span></li>
+</ul>
+</li>
+<li>
+<p><span>Speed of disk:</span></p>
+<ul>
+<li>
+<p><span>disk read(hdparm -Tt):89.24 MB/sec</span></p>
+</li>
+<li>
+<p><a href="https://kknews.cc/zh-tw/code/pyz8m8j.html" target="_blank" rel="noopener"><span>O_DIRECT</span></a><span>: 104.61 MB/sec</span></p>
+</li>
+<li>
+<p><a href="https://askubuntu.com/questions/87035/how-to-check-hard-disk-performance" target="_blank" rel="noopener"><span>max disk write</span></a><span>(fio):85.9MB/s</span></p>
+</li>
+</ul>
+</li>
+<li>
+<p><span>the maximum number of open file descriptors(ulimit -n)</span></p>
+<ul>
+<li><span>1024</span></li>
+</ul>
+</li>
+<li>
+<p><span>pipe buffer size:</span></p>
+<ul>
+<li><span>8*512 byte</span></li>
+</ul>
+</li>
+</ol><h2 id="程式執行相關數據：" data-id="程式執行相關數據："><a class="anchor hidden-xs" href="#程式執行相關數據：" title="程式執行相關數據："><span class="octicon octicon-link"></span></a><span>程式執行相關數據：</span></h2><table>
+<thead>
+<tr>
+<th><span>index</span></th>
+<th><span>memory size</span></th>
+<th><span>sec</span></th>
+<th><span>usr/sys</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>1</span></td>
+<td><span>31G</span></td>
+<td><span>2531.77</span></td>
+<td><span>2437/94</span></td>
+</tr>
+<tr>
+<td><span>2</span></td>
+<td><span>31G</span></td>
+<td><span>2485.05</span></td>
+<td><span>2395/92</span></td>
+</tr>
+<tr>
+<td><span>3</span></td>
+<td><span>31G</span></td>
+<td><span>2498.66</span></td>
+<td><span>2410/90</span></td>
+</tr>
+<tr>
+<td><span>4</span></td>
+<td><span>31G</span></td>
+<td><span>2438.94</span></td>
+<td><span>2395/90</span></td>
+</tr>
+<tr>
+<td><span>5</span></td>
+<td><span>31G</span></td>
+<td><span>2490.44</span></td>
+<td><span>2401/91</span></td>
+</tr>
+</tbody>
+</table><table>
+<thead>
+<tr>
+<th><span>index</span></th>
+<th><span>CPU cycles</span></th>
+<th><span>intstruction</span></th>
+<th><span>insn per cycle</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>1</span></td>
+<td><span>7,910,572,210,911</span></td>
+<td><span>15,591,426,719,848</span></td>
+<td><span>1.98</span></td>
+</tr>
+<tr>
+<td><span>2</span></td>
+<td><span>7,861,657,350,866</span></td>
+<td><span>15,595,532,108,222</span></td>
+<td><span>1.98</span></td>
+</tr>
+<tr>
+<td><span>3</span></td>
+<td><span>7,861,114,989,442</span></td>
+<td><span>15,596,188,721,322</span></td>
+<td><span>1.98</span></td>
+</tr>
+<tr>
+<td><span>4</span></td>
+<td><span>7,856,300,177,939</span></td>
+<td><span>15,594,975,681,551</span></td>
+<td><span>1.99</span></td>
+</tr>
+<tr>
+<td><span>5</span></td>
+<td><span>7,854,750,780,116</span></td>
+<td><span>15,595,464,636,273</span></td>
+<td><span>1.99</span></td>
+</tr>
+</tbody>
+</table><ul>
+<li><span>branch miss: 1.3%</span></li>
+<li><span>average context switch: 70,073</span></li>
+</ul><h2 id="程式開發與使用說明：" data-id="程式開發與使用說明："><a class="anchor hidden-xs" href="#程式開發與使用說明：" title="程式開發與使用說明："><span class="octicon octicon-link"></span></a><span>程式開發與使用說明：</span></h2><ul>
+<li>
+<p><span>請在你的程式中加入量測執行時間的程式碼，以精準的獲取此數值。</span><br>
+<span>我是使用C++的&lt;time.h&gt;大致流程如下</span></p>
+<pre><code class="clike hljs"><div class="wrapper"><div class="gutter linenumber"><span data-linenumber="1"></span>
+<span data-linenumber="2"></span>
+<span data-linenumber="3"></span></div><div class="code"><span class="hljs-attr">start</span> = clock()
+<span class="hljs-attr">end</span> = clock()
+<span class="hljs-attr">total_time</span> = (double)(end-start) / CPU_PER_CLOCK
+</div></div></code></pre>
+</li>
+<li>
+<p><span>random.cpp</span></p>
+<ul>
+<li>
+<p><span>這次產生random的檔案一開始可以先輸入輸入一個數字，代表想要產生大約多少GB的檔案，比如前者的31G大小就是輸入30所產生的，因為1G大約是</span><span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-11-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><msup><mn>10</mn><mn>9</mn></msup></math>" role="presentation" style="font-size: 119%; position: relative;"><span id="MJXc-Node-1" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-2" class="mjx-mrow"><span id="MJXc-Node-3" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-4" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">10</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-5" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">9</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mn>9</mn></msup></math></span></span><script type="math/tex" id="MathJax-Element-11">10^9</script></span><span>個數字。</span></p>
+</li>
+<li>
+<p><span>我是使用C++寫好的</span><a href="http://www.cplusplus.com/reference/random/" target="_blank" rel="noopener"><span>random</span></a><span>，並指定其為uniform，就可以不用考慮分佈不平均的問題(mod)，只要把範圍先寫好。</span></p>
+</li>
+</ul>
+<pre><code>    default_random_engine generator;
+    uniform_int_distribution&lt;int&gt; distribution(-2147483648 ,2147483647);
+</code></pre>
+<ul>
+<li><span>因為輸入的數字可能會超過int大小(</span><span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-12-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mn>2</mn><mo>&amp;#x2217;</mo><msup><mn>10</mn><mn>9</mn></msup></math>" role="presentation" style="font-size: 119%; position: relative;"><span id="MJXc-Node-6" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-7" class="mjx-mrow"><span id="MJXc-Node-8" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.318em;">2</span></span><span id="MJXc-Node-9" class="mjx-mo MJXc-space2"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.16em; padding-bottom: 0.318em;">∗</span></span><span id="MJXc-Node-10" class="mjx-msubsup MJXc-space2"><span class="mjx-base"><span id="MJXc-Node-11" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">10</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-12" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">9</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>2</mn><mo>∗</mo><msup><mn>10</mn><mn>9</mn></msup></math></span></span><script type="math/tex" id="MathJax-Element-12">2 * 10^9</script></span><span>)，所以我的size變數要先設成long long int</span></li>
+</ul>
+</li>
+<li>
+<p><span>sort.cpp</span></p>
+<ul>
+<li><span>是使用k-way的extenal sort，並把一個檔案分成以</span><span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-13-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><msup><mn>10</mn><mn>8</mn></msup></math>" role="presentation" style="font-size: 119%; position: relative;"><span id="MJXc-Node-13" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-14" class="mjx-mrow"><span id="MJXc-Node-15" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-16" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">10</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-17" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">8</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mn>8</mn></msup></math></span></span><script type="math/tex" id="MathJax-Element-13">10^8</script></span><span>為單位的pages，並命名為out_temp_X.txt(X為數字)，分成pages後做類似selection sort的作用，搜尋每一個pages的頭去找最小的，把最小的寫入output.txt，直到所有pages都是空的。如下圖。</span><br>
+<img src="https://i.imgur.com/AXDif64.png" alt=""><br>
+<span>程式的流程大概是長這樣</span><br>
+<img src="https://i.imgur.com/u5JVMCC.png" alt=""></li>
+</ul>
+</li>
+<li>
+<p><span>程式執行範例：</span></p>
+</li>
+</ul><pre><code class="clike hljs"><div class="wrapper"><div class="gutter linenumber"><span data-linenumber="1"></span>
+<span data-linenumber="2"></span>
+<span data-linenumber="3"></span>
+<span data-linenumber="4"></span>
+<span data-linenumber="5"></span>
+<span data-linenumber="6"></span></div><div class="code">g++ <span class="hljs-built_in">random</span>.cpp -o <span class="hljs-built_in">random</span>
+./<span class="hljs-built_in">random</span>
+<span class="hljs-built_in">input</span> the # of data <span class="hljs-keyword">in</span> a block size
+<span class="hljs-number">30</span>
+g++ -Ofast <span class="hljs-built_in">sort</span>.cpp -o <span class="hljs-built_in">sort</span>
+./<span class="hljs-built_in">sort</span> <span class="hljs-built_in">input</span>.txt
+</div></div></code></pre><h2 id="效能分析報告：" data-id="效能分析報告："><a class="anchor hidden-xs" href="#效能分析報告：" title="效能分析報告："><span class="octicon octicon-link"></span></a><span>效能分析報告：</span></h2><ul>
+<li><span>電腦閒置資源最小化。</span><br>
+<span>我利用htop觀察電腦正在跑的程序，並利用kill id把不需要的程式給刪除</span></li>
+<li><span>因為時間的關係，我把input大小改回11G，又因為我一個page是1G，所以我要把全部sort完，需要10個temp.txt檔</span></li>
+<li><span>1.1G 下的時間分佈</span><pre><code>file 0start sort time 11.9837 secs
+file 0end_t sort time 42.647 secs
+out_temp_1.txt has been sorted. 
+file 1start write temp time 42.6691 secs
+file 1end write temp time 51.0488 secs
+finish initial split
+split time 51.0489 secs
+start merge time 51.0489 secs
+end merge time 73.2152 secs
+finish merge
+total execution time 73.6183 secs
+
+</code></pre>
+</li>
+</ul><p><span>可以觀察到有超過一半(42%)的時間都在做Internal sort，merge time佔大約30%, fprintf佔12%</span></p><ul>
+<li>
+<p><span>程式大概可以分生幾個部份去做分析:</span></p>
+<ul>
+<li><span>前半部:</span><br>
+<span>程式執行split，cpu usage和internal sort相關，context switch和disk R/W相關，Disk I/O和I/O相關，context switch和cpu相關。</span></li>
+<li><span>後半部:</span><br>
+<span>程式執行merge</span></li>
+</ul>
+</li>
+<li>
+<p><span>Single process</span></p>
+<ol>
+<li><span>memory usage</span><br>
+<img src="https://i.imgur.com/GMBE8Dl.png" alt=""><br>
+<span>表面上看起來都沒有明顯的變化。</span></li>
+<li><span>cpu usage</span><br>
+<img src="https://i.imgur.com/jJogbx5.png" alt=""></li>
+</ol>
+<ul>
+<li><span>觀察:</span>
+<ul>
+<li><span>可以發現，前半部cpu都是有周期的波動，判斷是在執行split函式，把input.txt拆分成10個暫存檔，並做sort，經過實驗是sort吃cpu資源最多。後半部，可以發現cpu佔用比不高。且htop後發現，是系統內部的程序在使用居多。</span></li>
+</ul>
+</li>
+<li><span>驗證：</span>
+<ul>
+<li><span>寫一個簡單的sort.cpp並利用1GB的資料去跑，top之後就可以發現cpu都在處理他，cpu佔用率可達100%</span></li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li><span>python分析</span>
+<ul>
+<li>
+<p><span>Disk R/W</span><img src="https://i.imgur.com/eoGCMgb.png" alt=""><br>
+<span>前半部，可以發現read都會比write先發生，這是因為要把input.txt 先 read才能寫到</span><span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-52-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>o</mi><mi>u</mi><msub><mi>t</mi><mi>t</mi></msub><mi>e</mi><mi>m</mi><msub><mi>p</mi><mo>&amp;#x2217;</mo></msub><mo>.</mo><mi>t</mi><mi>x</mi><mi>t</mi></math>" role="presentation" style="font-size: 119%; position: relative;"><span id="MJXc-Node-417" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-418" class="mjx-mrow"><span id="MJXc-Node-419" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.213em; padding-bottom: 0.265em;">o</span></span><span id="MJXc-Node-420" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.213em; padding-bottom: 0.265em;">u</span></span><span id="MJXc-Node-421" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-422" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.423em; padding-bottom: 0.265em;">t</span></span></span><span class="mjx-sub" style="font-size: 70.7%; vertical-align: -0.212em; padding-right: 0.071em;"><span id="MJXc-Node-423" class="mjx-mi" style=""><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.423em; padding-bottom: 0.265em;">t</span></span></span></span><span id="MJXc-Node-424" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.213em; padding-bottom: 0.265em;">e</span></span><span id="MJXc-Node-425" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.213em; padding-bottom: 0.265em;">m</span></span><span id="MJXc-Node-426" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-427" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.213em; padding-bottom: 0.475em;">p</span></span></span><span class="mjx-sub" style="font-size: 70.7%; vertical-align: -0.212em; padding-right: 0.071em;"><span id="MJXc-Node-428" class="mjx-mo" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.16em; padding-bottom: 0.318em;">∗</span></span></span></span><span id="MJXc-Node-429" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="margin-top: -0.155em; padding-bottom: 0.318em;">.</span></span><span id="MJXc-Node-430" class="mjx-mi MJXc-space1"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.423em; padding-bottom: 0.265em;">t</span></span><span id="MJXc-Node-431" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.213em; padding-bottom: 0.265em;">x</span></span><span id="MJXc-Node-432" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.423em; padding-bottom: 0.265em;">t</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>o</mi><mi>u</mi><msub><mi>t</mi><mi>t</mi></msub><mi>e</mi><mi>m</mi><msub><mi>p</mi><mo>∗</mo></msub><mo>.</mo><mi>t</mi><mi>x</mi><mi>t</mi></math></span></span><script type="math/tex" id="MathJax-Element-52">out_temp_*.txt</script></span><span>，可以發現剛好就是10個週期，最後一個之所以浮動較小也是因為他的資料不是</span><span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-53-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><msup><mn>10</mn><mn>9</mn></msup></math>" role="presentation" style="font-size: 119%; position: relative;"><span id="MJXc-Node-433" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-434" class="mjx-mrow"><span id="MJXc-Node-435" class="mjx-msubsup"><span class="mjx-base"><span id="MJXc-Node-436" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">10</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-437" class="mjx-mn" style=""><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">9</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mn>9</mn></msup></math></span></span><script type="math/tex" id="MathJax-Element-53">10^9</script></span><br>
+<span>後半部，可以發現disk read&amp;write剛好分開的，也就是說程式正從out_temp_*.txt讀到output.txt</span></p>
+</li>
+<li>
+<p><span>I/O</span><img src="https://i.imgur.com/GA6Moyl.png" alt=""><br>
+<span>I/O其實和 Disk R/W很像，因為I/O代表就是I/O request，也就是說一有request不會多久OS就會去做讀寫的工作</span></p>
+</li>
+<li>
+<p><span>Page I/O</span><img src="https://i.imgur.com/b4r33n8.png" alt=""><br>
+<span>可以很明顯的感受到在500秒後，page I/O的output明顯開始增長，因為他要開始寫入output.txt</span></p>
+</li>
+<li>
+<p><span>CPU usage</span><br>
+<span>total</span><img src="https://i.imgur.com/Vp6dso4.png" alt=""><br>
+<span>可以看到前半段是有週期性的在抖動，而進入後半段之後，cpu的值呈現極端的上升和下降，可以觀察到cpu上升的地方是disk read值大的地方，因為read代表著正在做selection的動作，需要做比較大小的判斷，故cpu usage提升，仔細觀察也可以發現有10個週期(一開始不算的話，那應該是開始跑程式)，根據實驗結果，cpu高峰應是在做 interanal sort</span><br>
+<span>distribution</span><img src="https://i.imgur.com/1bN326A.png" alt=""><br>
+<span>可以觀察到sys&amp;usr的浮動息息相關，而wai都會提前作上升和下降，很符合他的定義。</span><br>
+<span>core usage</span><img src="https://i.imgur.com/FcBHDhx.png" alt=""><br>
+<span>可以看到一個internal sort由一個thread做，後半段則頻繁的在做context switch</span></p>
+</li>
+<li>
+<p><span>memory usage:</span><br>
+<img src="https://i.imgur.com/9DtCBVJ.png" alt=""><br>
+<span>整個程式用不太到memory，</span><a href="#summary"><span>關於linux的記憶體資料</span></a><span>。</span></p>
+</li>
+<li>
+<p><span>interrupt</span><img src="https://i.imgur.com/rxEOYZ2.png" alt=""><br>
+<span>放大來看</span><img src="https://i.imgur.com/RhAWvA6.png" alt=""><br>
+<span>可以發現和之後的system interrupt很像</span></p>
+</li>
+<li>
+<p><span>swap usage</span><img src="https://i.imgur.com/jFm5TYN.png" alt=""><br>
+<span>因為記憶體一值都很足夠，所以swap一直都沒有用到</span></p>
+</li>
+<li>
+<p><span>system</span><img src="https://i.imgur.com/l1F8E30.png" alt=""><br>
+<span>前半部剛好可以看做是10個週期，並且context switch的高峰發生在disk R/W切換部分</span><br>
+<span>根據維基百科可以發現context switch和interrupt相關，而且由圖可知，在context switch 發生時，Interrupt也會隨之增加。而且可以由觀察發現，context switch剛好也是10個週期，和cpu的週期很類似。</span></p>
+</li>
+<li>
+<p><span>process</span><img src="https://i.imgur.com/PEYTFQH.png" alt=""><br>
+<img src="https://i.imgur.com/q2ZtFC8.png" alt=""><br>
+<span>參照OS的流程</span><br>
+<span>因為系統是專心在處理sort.cpp所以可以看到waiting(blk)很少，系統主要都在new&amp;run process，而且可以發彥在後半部的waiting process有比較多的waiting，可能是因為selection的時候，有些資源必須等到其他東西寫入才能做。</span></p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><span>multi process(4 process)</span></p>
+<ul>
+<li>
+<p><span>前處理：</span></p>
+<ul>
+<li><span>因為擔心file 之間的指標互相影響，導致程式之間不是獨立的，我把input.txt分成4個input1.txt, input2.txt…，另外也去把sort.cpp的程式碼改檔案的命名。</span></li>
+<li><span>指令：</span>
+<ul>
+<li><span>dstat -d -r -g -i -m -p -s --output ~/homework/os/Entity/mul_stat.csv</span></li>
+<li><span>dstat -C 0,1,2,3,4,5,6,7,total --output ~/homework/os/Entity/mul_cpu.csv</span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><span>cpu usage:</span><br>
+<img src="https://i.imgur.com/LcWDSvi.png" alt=""><br>
+<img src="https://i.imgur.com/lEvIJoO.png" alt=""><br>
+<span>發現當所有sort程式都進入merge狀態時，cpu使用率其實都不高，但透過htop的表現可以發現，disk read &amp; disk write的速度其實很高，並且都很平均分佈</span><br>
+<img src="https://i.imgur.com/1rCV3X5.png" alt=""><br>
+<img src="https://i.imgur.com/TXNahAz.png" alt=""><br>
+<img src="https://i.imgur.com/Doxjz4v.png" alt=""><br>
+<img src="https://i.imgur.com/DOMAvDd.png" alt=""><br>
+<img src="https://i.imgur.com/d878YWY.png" alt=""><br>
+<img src="https://i.imgur.com/qTWqxEs.png" alt=""><br>
+<img src="https://i.imgur.com/u33d0rO.png" alt=""></p>
+</li>
+<li>
+<p><span>memory usage:</span><br>
+<span>開始沒多久</span><br>
+<img src="https://i.imgur.com/wdHCuo2.png" alt=""><br>
+<span>結束時</span><br>
+<img src="https://i.imgur.com/DsAgbUY.png" alt=""></p>
+</li>
+<li>
+<p><span>觀察：</span></p>
+<ul>
+<li><span>在91min分鐘左右，第一個sort完成，94min第二個sort完成，總長大概花費了105 min。 可以發現總時數比單獨執行四次還要常許多。多了大概1.5倍個執行時間，那些時間都拿去做context switch &amp; I/O的處理。</span></li>
+</ul>
+<pre><code>one time 1060 sec
+1060*4=4240
+four time simultaneously 6350 sec
+</code></pre>
+<ul>
+<li><span>compare:</span><br>
+<img src="https://i.imgur.com/AJHcpoM.png" alt=""><br>
+<span>可以發現，其實cpu usage和memory usage之間並沒有甚麼影響</span></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><span>index</span></th>
+<th><span>split time(sec)</span></th>
+<th><span>finish time(sec)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span>1</span></td>
+<td><span>740</span></td>
+<td><span>1222</span></td>
+</tr>
+<tr>
+<td><span>2</span></td>
+<td><span>740</span></td>
+<td><span>1180</span></td>
+</tr>
+<tr>
+<td><span>3</span></td>
+<td><span>755</span></td>
+<td><span>1191</span></td>
+</tr>
+<tr>
+<td><span>4</span></td>
+<td><span>732</span></td>
+<td><span>1197</span></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p><span>python分析</span></p>
+<ul>
+<li>
+<p><span>Disk R/W</span><img src="https://i.imgur.com/tu6ZPin.png" alt=""><br>
+<span>可以發現他同時執行4個sort.cpp時，會盡量同步去做IO的處理，不會是集中資源先完成一個process</span></p>
+</li>
+<li>
+<p><span>I/O</span><img src="https://i.imgur.com/NIzx6XN.png" alt=""></p>
+</li>
+<li>
+<p><span>Page I/O</span><img src="https://i.imgur.com/Zh49l0a.png" alt=""></p>
+</li>
+<li>
+<p><span>cpu usage</span><br>
+<span>total</span><img src="https://i.imgur.com/CMwCYBT.png" alt=""><br>
+<span>可以發現cpu已經沒有明顯週期了，因為都一直在做context switch，所以比較少idl的空閒。</span><br>
+<span>core</span><img src="https://i.imgur.com/ykDmQUx.png" alt=""><br>
+<span>可以發現8個thread都很平均的分布，不會有一個therad負責比較多的工作。</span><br>
+<span>distribution，觀察cpu:0的細部</span><img src="https://i.imgur.com/YfGMGKG.png" alt=""><br>
+<span>可以發現雖然total cpu usage沒有週期，但細看的話，內部的thread還是有週期，且浮動性很像單一cpu在跑，只是interval time比較長</span></p>
+</li>
+<li>
+<p><span>memory usage</span><img src="https://i.imgur.com/iePw1pq.png" alt=""><br>
+<span>OS似乎又在控制memory usage讓她呈現很平衡的狀態。</span></p>
+</li>
+<li>
+<p><span>interrupt</span><img src="https://i.imgur.com/P8xuzI5.png" alt=""><br>
+<span>放大來看</span><img src="https://i.imgur.com/G9ESEBD.png" alt=""><br>
+<span>可以很明顯的發現，interrupt的次數遠超單一process，符合預期，因為她要不斷的做context switch</span></p>
+</li>
+<li>
+<p><span>swap usage</span><img src="https://i.imgur.com/EbUlkir.png" alt=""></p>
+</li>
+<li>
+<p><span>system</span><img src="https://i.imgur.com/X7uGAva.png" alt=""><br>
+<span>前半部會有小周期，可能是因為sort時，並不會做去做context switch，他會一次把她sort完</span></p>
+</li>
+<li>
+<p><span>Process</span><img src="https://i.imgur.com/tToBffk.png" alt=""><br>
+<span>因為context switch頻繁，且程序眾多，所以在waiting的process也比單一process的時候多很多。</span></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><h3 id="python-code" data-id="python-code"><a class="anchor hidden-xs" href="#python-code" title="python-code"><span class="octicon octicon-link"></span></a><a href="https://github.com/shangrex/Entity/blob/anaylyze/Untitled.ipynb" rel="noopener" target="_blank"><span>python code</span></a></h3><ul>
+<li>
+<p><span>優化你的程式（例如：降低執行時間）。</span></p>
+<ul>
+<li><span>compile optimization</span></li>
+</ul>
+<pre><code>g++ -Ofast sort.cpp -o sort
+</code></pre>
+<p><span>initial external sort cost about 760 secs</span><br>
+<span>compile optimize cost</span></p>
+<ul>
+<li><span>code</span>
+<ul>
+<li><span>原先在pages儲存是採用動態vector</span></li>
+<li><span>排序1.1G 平均花費 90 sec</span></li>
+<li><span>後來把所有部份改寫成array</span></li>
+<li><span>排序1.1G 平均花費 74 sec</span></li>
+</ul>
+</li>
+<li><span>read &amp; write 寫法(mmap)</span></li>
+</ul>
+</li>
+<li>
+<p><span>model</span></p>
+<ul>
+<li><span>1</span>
+<ul>
+<li><span>goal:預測context switch</span></li>
+<li><span>feature:</span></li>
+<li><span>average loss:</span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><span>你開發的排序程式對硬體效能優化程度的說明與驗證。</span></p>
+<ul>
+<li><span>pipline</span></li>
+<li><span>superscalar</span></li>
+<li><span>out-ot-order execution</span></li>
+<li><span>L1, L2 cache</span></li>
+<li><span>banch prediction</span></li>
+</ul>
+</li>
+</ul><h2 id="summary" data-id="summary"><a class="anchor hidden-xs" href="#summary" title="summary"><span class="octicon octicon-link"></span></a><span>summary</span></h2><p><span>排序程式下，你對系統效能的觀察，並結論OS的設計要提供哪些優化服務。</span></p><ul>
+<li><span>branch predict</span>
+<ul>
+<li><span>因為在寫入檔案是我有一個for回圈裡有一個if來判斷最後要不要換行，這部份OS有做branch prediction</span></li>
+</ul>
+</li>
+<li><span>cpu migration</span>
+<ul>
+<li><span>這點也可以從system monitor清楚的看出來(每個顏色都有高低峰值)，context switch可以使電腦更流暢的運作，而降低cpu migration也是OS重要的功能(降低I/O)</span></li>
+</ul>
+</li>
+<li><span>page</span>
+<ul>
+<li><span>可以發現我們在執行的過程中記憶體用量依直都很少，其實這得歸功於page，OS利用virtual memory把許多不必要的記憶體都放回disk，導致memory usage並沒有在後其寫入資料時劇烈上升。</span></li>
+<li><span>可以看到page fault數字其實是蠻多的。</span></li>
+</ul>
+</li>
+<li><span>system call</span>
+<ul>
+<li><span>可以發現，程式的執行時間分成usr time &amp; sys time，因為在做檔案的操作時，必須呼叫system call 來做open, write, read和disk的讀寫</span></li>
+</ul>
+</li>
+<li><a href="https://man7.org/linux/man-pages/man2/open.2.html" target="_blank" rel="noopener"><span>sync</span></a><br>
+<img src="https://i.imgur.com/CqdfJie.png" alt=""></li>
+<li><a href="https://blog.gtwang.org/linux/linux-cache-memory-linux/" target="_blank" rel="noopener"><span>linux memory</span></a><span> 由cache, used, free, buff組成</span></li>
+</ul></div>
+    <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+        <div class="pull-right dropdown">
+            <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                <div class="toc"><ul class="nav">
+<li class=""><a href="#OS-HW1" title="OS HW1">OS HW1</a><ul class="nav">
+<li><a href="#開發環境：" title="開發環境：">開發環境：</a></li>
+<li><a href="#程式執行相關數據：" title="程式執行相關數據：">程式執行相關數據：</a></li>
+<li><a href="#程式開發與使用說明：" title="程式開發與使用說明：">程式開發與使用說明：</a></li>
+<li class=""><a href="#效能分析報告：" title="效能分析報告：">效能分析報告：</a><ul class="nav">
+<li><a href="#python-code" title="python code">python code</a></li>
+</ul>
+</li>
+<li><a href="#summary" title="summary">summary</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+            </ul>
+        </div>
+    </div>
+    <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;" null null>
+        <div class="toc"><ul class="nav">
+<li class=""><a href="#OS-HW1" title="OS HW1">OS HW1</a><ul class="nav">
+<li><a href="#開發環境：" title="開發環境：">開發環境：</a></li>
+<li><a href="#程式執行相關數據：" title="程式執行相關數據：">程式執行相關數據：</a></li>
+<li><a href="#程式開發與使用說明：" title="程式開發與使用說明：">程式開發與使用說明：</a></li>
+<li class=""><a href="#效能分析報告：" title="效能分析報告：">效能分析報告：</a><ul class="nav">
+<li><a href="#python-code" title="python code">python code</a></li>
+</ul>
+</li>
+<li><a href="#summary" title="summary">summary</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+    <script>
+        var markdown = $(".markdown-body");
+        //smooth all hash trigger scrolling
+        function smoothHashScroll() {
+            var hashElements = $("a[href^='#']").toArray();
+            for (var i = 0; i < hashElements.length; i++) {
+                var element = hashElements[i];
+                var $element = $(element);
+                var hash = element.hash;
+                if (hash) {
+                    $element.on('click', function (e) {
+                        // store hash
+                        var hash = this.hash;
+                        if ($(hash).length <= 0) return;
+                        // prevent default anchor click behavior
+                        e.preventDefault();
+                        // animate
+                        $('body, html').stop(true, true).animate({
+                            scrollTop: $(hash).offset().top
+                        }, 100, "linear", function () {
+                            // when done, add hash to url
+                            // (default click behaviour)
+                            window.location.hash = hash;
+                        });
+                    });
+                }
+            }
+        }
+
+        smoothHashScroll();
+        var toc = $('.ui-toc');
+        var tocAffix = $('.ui-affix-toc');
+        var tocDropdown = $('.ui-toc-dropdown');
+        //toc
+        tocDropdown.click(function (e) {
+            e.stopPropagation();
+        });
+
+        var enoughForAffixToc = true;
+
+        function generateScrollspy() {
+            $(document.body).scrollspy({
+                target: ''
+            });
+            $(document.body).scrollspy('refresh');
+            if (enoughForAffixToc) {
+                toc.hide();
+                tocAffix.show();
+            } else {
+                tocAffix.hide();
+                toc.show();
+            }
+            $(document.body).scroll();
+        }
+
+        function windowResize() {
+            //toc right
+            var paddingRight = parseFloat(markdown.css('padding-right'));
+            var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+            toc.css('right', right + 'px');
+            //affix toc left
+            var newbool;
+            var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+            //for ipad or wider device
+            if (rightMargin >= 133) {
+                newbool = true;
+                var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                tocAffix.css('left', left + 'px');
+            } else {
+                newbool = false;
+            }
+            if (newbool != enoughForAffixToc) {
+                enoughForAffixToc = newbool;
+                generateScrollspy();
+            }
+        }
+        $(window).resize(function () {
+            windowResize();
+        });
+        $(document).ready(function () {
+            windowResize();
+            generateScrollspy();
+        });
+
+        //remove hash
+        function removeHash() {
+            window.location.hash = '';
+        }
+
+        var backtotop = $('.back-to-top');
+        var gotobottom = $('.go-to-bottom');
+
+        backtotop.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToTop)
+                scrollToTop();
+            removeHash();
+        });
+        gotobottom.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToBottom)
+                scrollToBottom();
+            removeHash();
+        });
+
+        var toggle = $('.expand-toggle');
+        var tocExpand = false;
+
+        checkExpandToggle();
+        toggle.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tocExpand = !tocExpand;
+            checkExpandToggle();
+        })
+
+        function checkExpandToggle () {
+            var toc = $('.ui-toc-dropdown .toc');
+            var toggle = $('.expand-toggle');
+            if (!tocExpand) {
+                toc.removeClass('expand');
+                toggle.text('Expand all');
+            } else {
+                toc.addClass('expand');
+                toggle.text('Collapse all');
+            }
+        }
+
+        function scrollToTop() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: 0
+            }, 100, "linear");
+        }
+
+        function scrollToBottom() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: $(document.body)[0].scrollHeight
+            }, 100, "linear");
+        }
+    </script>
+</body>
+
+</html>
