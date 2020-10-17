@@ -6,20 +6,22 @@
 #include <mutex>
 using namespace std;
 mutex mu;
-void consumer(int *array, int batch_pos, int batch_size, fstream&file_out, int array_size){
+void consumer(int *array, int batch_pos, int batch_size, int array_size, string *s){
     cout << batch_pos << endl;
     for(int i = 0; i < batch_size/20; i+=1){
         if(batch_pos+i*20+20 > array_size)break;
         if(batch_pos != 0 || i != 0){
-            file_out << ",{\n";
+            *s += ",{\n";
         }
         for(int j = 0; j < 20; j++){
-            file_out << "\"col_" << j+1 << "\":" << array[batch_pos+i*20+j];
-            if(j < 19) file_out << ",\n";
-            else file_out << "\n";
+            
+            *s +=  "\"col_" + to_string(j+1) + "\":" + to_string(array[batch_pos+i*20+j]);
+            if(j < 19) *s += ",\n";
+            else *s +=  "\n";
+            
         }
-        file_out << "}\n";
-    }
+        *s += "}\n";
+    }   
     
 }
 int main(){
@@ -54,16 +56,22 @@ int main(){
         //determine the size of thread can do 
         int batch_size = array_size/thread_num + 20 - (array_size/thread_num)%20;
         cout << "batch size is " << batch_size << endl;
-        char *json=NULL;
+        string s[thread_num];
         thread producer[thread_num];
         for(int i = 0; i < thread_num; i++){
-            producer[i] = thread(consumer, array, batch_size*i, batch_size, ref(file_out), array_size);
+            producer[i] = thread(consumer, array, batch_size*i, batch_size, array_size, &s[i]);
+        }
+        for(int i = 0; i < thread_num; i++){
             producer[i].join();
+        }
+        for(int i = 0; i < thread_num; i++){
+            file_out << s[i];
         }
         file_out << "]";
         end = clock();
         cout << "total execution time " << ((double) (end - start)) / CLOCKS_PER_SEC  << " secs" << endl;
-
+        file_out.close();
+        fclose(file_in);
     }
     else {
         cout << "Error in reading input.txt" << endl;
