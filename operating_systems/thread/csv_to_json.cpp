@@ -10,7 +10,7 @@ int main(){
     fstream file_in("input.txt",ios::in);
     if(file_in){
         start = clock();
-        fstream file_out("output.txt", ios::out);
+        fstream file_out("output.json", ios::out);
         file_out << "[";
         string s;
         size_t pos = 0;

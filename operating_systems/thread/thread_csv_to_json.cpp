@@ -31,7 +31,7 @@ int main(){
     FILE *file_in = fopen("input.txt", "r");
     if(file_in){
         start = clock();
-        fstream file_out("output.txt", ios::app);
+        fstream file_out("output.json", ios::app);
         file_out << "[";
         file_out << "{\n";
 
