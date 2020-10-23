@@ -4,7 +4,7 @@
 #include <time.h>
 using namespace std;
 int main(){
-    ofstream file("input.txt", ios::out);
+    ofstream file("input.csv", ios::out);
     if(file){
         clock_t start, end;
         int line;

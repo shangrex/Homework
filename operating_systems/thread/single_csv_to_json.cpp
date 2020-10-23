@@ -4,35 +4,32 @@
 #include <thread>
 #include <time.h>
 #include <mutex>
-#include <stdlib.h>
 using namespace std;
 mutex mu;
-void consumer(int *array, int batch_pos, int batch_size, int array_size, string *s){
+void consumer(int *array, int batch_pos, int batch_size, fstream&file_out, int array_size){
     cout << batch_pos << endl;
     for(int i = 0; i < batch_size/20; i+=1){
         if(batch_pos+i*20+20 > array_size)break;
         if(batch_pos != 0 || i != 0){
-            *s += ",{\n";
+            file_out << ",{\n";
         }
         for(int j = 0; j < 20; j++){
-            
-            *s +=  "\"col_" + to_string(j+1) + "\":" + to_string(array[batch_pos+i*20+j]);
-            if(j < 19) *s += ",\n";
-            else *s +=  "\n";
-            
+            file_out << "\"col_" << j+1 << "\":" << array[batch_pos+i*20+j];
+            if(j < 19) file_out << ",\n";
+            else file_out << "\n";
         }
-        *s += "}\n";
-    }   
+        file_out << "}\n";
+    }
     
 }
-int main(int argc, char* argv[]){
+int main(int argc, char *argv[]){
     clock_t start, end;
-    clock_t i1, i2, i3, i4;
-    int thread_num = stoi(argv[1]);
+    int thread_num;
+    thread_num = stoi(argv[1]);
     FILE *file_in = fopen("input.csv", "r");
     if(file_in){
         start = clock();
-        fstream file_out("output.json", ios::app);
+        fstream file_out("output.txt", ios::app);
         file_out << "[";
         file_out << "{\n";
 
@@ -57,28 +54,16 @@ int main(int argc, char* argv[]){
         //determine the size of thread can do 
         int batch_size = array_size/thread_num + 20 - (array_size/thread_num)%20;
         cout << "batch size is " << batch_size << endl;
-        string s[thread_num];
+        char *json=NULL;
         thread producer[thread_num];
-        i1 = clock();
-        cout << "input time " << ((double) (i1 - start)) / CLOCKS_PER_SEC  << " secs" << endl;
         for(int i = 0; i < thread_num; i++){
-            producer[i] = thread(consumer, array, batch_size*i, batch_size, array_size, &s[i]);
-        }
-        for(int i = 0; i < thread_num; i++){
+            producer[i] = thread(consumer, array, batch_size*i, batch_size, ref(file_out), array_size);
             producer[i].join();
         }
-        i2 = clock();
-        cout << "thread (to json) time " << ((double) (i2 - i1)) / CLOCKS_PER_SEC  << " secs" << endl;
-        for(int i = 0; i < thread_num; i++){
-            file_out << s[i];
-        }
-        i3 = clock();
         file_out << "]";
-        cout << "write file time " << ((double) (i3 - i2)) / CLOCKS_PER_SEC  << " secs" << endl;
         end = clock();
         cout << "total execution time " << ((double) (end - start)) / CLOCKS_PER_SEC  << " secs" << endl;
-        file_out.close();
-        fclose(file_in);
+
     }
     else {
         cout << "Error in reading input.txt" << endl;
