@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1073</width>
+    <height>847</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>120</y>
+      <width>151</width>
+      <height>601</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>1. Image Processing</string>
+    </property>
+    <widget class="QPushButton" name="load_button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>90</y>
+       <width>151</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1.1 Load Image File </string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="seperate_button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>210</y>
+       <width>151</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1.2 Color Separation</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="flip_buuton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>360</y>
+       <width>151</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1.3  Image Flipping</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="blend_button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>490</y>
+       <width>151</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1.4 Blending</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>120</y>
+      <width>151</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>2. Image Smoothing</string>
+    </property>
+    <widget class="QPushButton" name="median_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>90</y>
+       <width>151</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2.1 Median filter</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="gaussian_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>210</y>
+       <width>151</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2.2 Gaussian blur </string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bilateral_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>360</y>
+       <width>151</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2.3 Bilateral filter </string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>120</y>
+      <width>171</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>3 Edge Detection</string>
+    </property>
+    <widget class="QPushButton" name="guassian_gray_Button">
+     <property name="geometry">
+      <rect>
+       <x>-2</x>
+       <y>90</y>
+       <width>171</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>3.1 Guassian Blur</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="sobelx_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>210</y>
+       <width>171</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>3.2 Sobel X</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="sobely_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>360</y>
+       <width>171</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>3.3 Sobel Y</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="magnitude_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>490</y>
+       <width>171</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>3.4 Magnitude</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="ok_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>550</y>
+       <width>81</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>OK</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="cancel_Button">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>550</y>
+       <width>81</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>120</y>
+      <width>241</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>4. Transformation</string>
+    </property>
+    <widget class="QPushButton" name="transformation_Button">
+     <property name="geometry">
+      <rect>
+       <x>-2</x>
+       <y>550</y>
+       <width>241</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>4. Transformation</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Rotation</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>110</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>deg</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="scaling_text">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>210</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Scaling</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>360</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Tx</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="tx_text">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>350</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="rotation_text">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>100</y>
+       <width>104</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>490</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ty</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="ty_text">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>480</y>
+       <width>104</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>360</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>pixel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>490</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>pixel</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1073</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
