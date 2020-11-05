@@ -166,7 +166,8 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
             for i in range(y):
                 for j in range(x):
                     new_image[i][j] = np.sum(image[i:i+m, j:j+m]*kernel)
-
+        else:
+            new_image = np.zeros((y, x))
         return new_image
 
     def click_sobelx_Button(self):
