@@ -8,8 +8,15 @@ import numpy as np
 from PIL import Image
 import math
 from numpy.fft import fft2, ifft2
-
-
+import pickle
+import torch
+import torch.nn as nn
+import pandas as pd
+import random
+from torchvision import models
+import tqdm
+from torch.utils.data import DataLoader
+# import include
 
 class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
     def __init__(self, parent=None):
@@ -34,6 +41,85 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
         self.transformation_Button.clicked.connect(self.click_transformation_Button)
         #define default image
         self.array = np.zeros(10)
+        #show image
+        self.showimages_Button.clicked.connect(self.click_showimages_Button)
+        self.showparameters_Button.clicked.connect(self.click_showparameters_Button)
+        self.showmodel_Button.clicked.connect(self.click_showmodel_Button)
+        self.showaccuracy_Button.clicked.connect(self.click_showaccuracy_Button)
+        self.test_Button.clicked.connect(self.click_test_Button)
+
+    def unpickle(self, file):
+        with open(file, 'rb') as fo:
+            d = pickle.load(fo, encoding='bytes')
+        return d
+    
+    def convert_image(self, raw_image):
+        np.set_printoptions(threshold=sys.maxsize)
+        raw = np.array(raw_image, dtype=float)/255.0
+        images = raw.reshape([-1, 3, 32, 32])
+        images = images.transpose([0, 2, 3, 1])
+
+        return images
+
+    def load_data(self):
+        print("load data")
+        self.data = self.unpickle("cifar-10-batches-py/data_batch_1")
+        self.labels_name = self.unpickle("cifar-10-batches-py/batches.meta")
+        raw_images = self.data[b'data']
+        self.images = self.convert_image(raw_images)
+        self.labels = np.array(self.data[b'labels'])
+        self.class_name = self.labels_name[b'label_names']
+        self.class_name = [i.decode('utf-8') for i in self.class_name]
+        print(self.class_name)
+
+
+    def click_showimages_Button(self):
+        print("click_showimages_Button")
+        self.load_data()
+        fig = [i for i in range(10)]
+        for i in range(10):
+            fig[i] = plt.figure()
+            ran = random.randint(0, 9999)
+            plt.imshow(self.images[ran])
+            plt.title(self.class_name[self.labels[ran]])
+            fig[i].show()
+            print(self.labels[ran])
+
+
+
+    def click_showparameters_Button(self):
+        print("click_showparameters_Button")
+        self.batch_size = 32
+        self.lr = 0.001
+        self.optimizer = "SGD"
+        self.epoch = 1
+        print("Hyperparameters:")
+        print("batch size:", self.batch_size)
+        print("learngin rate", self.lr)
+        print("optimizer", self.optimizer)
+        print("epoch", self.epoch)
+
+    def click_showmodel_Button(self):
+        print("click_showmodel_Button")
+        self.model = models.vgg16()
+        print(self.model)
+
+    def click_showaccuracy_Button(self):
+        print("click_showaccuracy_Button")
+        self.load_data()
+        self.click_showparameters_Button()
+
+        # inlcude.train()
+        
+
+
+
+
+  
+
+    def click_test_Button(self):
+        print("click_test_Button")
+
 
     def click_transformation_Button(self):
         print("click_transformation_Button")
