@@ -16,7 +16,12 @@ import random
 from torchvision import models
 import tqdm
 from torch.utils.data import DataLoader
-# import include
+import torchvision.transforms as transforms
+import torchvision
+import include
+import os
+from torch.utils.tensorboard import SummaryWriter
+
 
 class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
     def __init__(self, parent=None):
@@ -47,6 +52,7 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
         self.showmodel_Button.clicked.connect(self.click_showmodel_Button)
         self.showaccuracy_Button.clicked.connect(self.click_showaccuracy_Button)
         self.test_Button.clicked.connect(self.click_test_Button)
+        self.inference_pushButton.clicked.connect(self.click_inference_Button)
 
     def unpickle(self, file):
         with open(file, 'rb') as fo:
@@ -63,36 +69,52 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
 
     def load_data(self):
         print("load data")
-        self.data = self.unpickle("cifar-10-batches-py/data_batch_1")
-        self.labels_name = self.unpickle("cifar-10-batches-py/batches.meta")
-        raw_images = self.data[b'data']
-        self.images = self.convert_image(raw_images)
-        self.labels = np.array(self.data[b'labels'])
-        self.class_name = self.labels_name[b'label_names']
-        self.class_name = [i.decode('utf-8') for i in self.class_name]
-        print(self.class_name)
+        transform = transforms.Compose(
+        [transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+        self.trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                        download=True, transform=transform)
+        
+        self.testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                            download=True, transform=transform)
+       
+        self.classes = ('plane', 'car', 'bird', 'cat',
+           'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
+    
     def click_showimages_Button(self):
         print("click_showimages_Button")
         self.load_data()
-        fig = [i for i in range(10)]
-        for i in range(10):
-            fig[i] = plt.figure()
-            ran = random.randint(0, 9999)
-            plt.imshow(self.images[ran])
-            plt.title(self.class_name[self.labels[ran]])
-            fig[i].show()
-            print(self.labels[ran])
+        trainloader = torch.utils.data.DataLoader(self.trainset, batch_size=10,
+                                                shuffle=True, num_workers=2)
+        
+        def imshow(img, labels):
+            img = img / 2 + 0.5     # unnormalize
+            npimg = img.numpy()
+            plt.imshow(np.transpose(npimg, (1, 2, 0)))
+            # plt.text((0.0), labels)
+            s = ""
+            for i in labels:
+                s += self.classes[i]+"     "
+            plt.text(x=0, y=0, s=s)
+            plt.show()
+        # get some random training images
+        dataiter = iter(trainloader)
+        
+        images, labels = dataiter.next()
 
-
+  
+        # show images
+        imshow(torchvision.utils.make_grid(images, nrow=10), labels)
 
     def click_showparameters_Button(self):
         print("click_showparameters_Button")
         self.batch_size = 32
-        self.lr = 0.001
-        self.optimizer = "SGD"
-        self.epoch = 1
+        self.lr = 0.0001
+        self.optimizer = "Adam"
+        self.epoch = 30
         print("Hyperparameters:")
         print("batch size:", self.batch_size)
         print("learngin rate", self.lr)
@@ -102,24 +124,67 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
     def click_showmodel_Button(self):
         print("click_showmodel_Button")
         self.model = models.vgg16()
+        self.model.classifier._modules['6'] = nn.Linear(in_features=4096, out_features=10, bias=True)
+
         print(self.model)
 
     def click_showaccuracy_Button(self):
         print("click_showaccuracy_Button")
         self.load_data()
         self.click_showparameters_Button()
-
-        # inlcude.train()
+        trainloader = torch.utils.data.DataLoader(self.trainset, batch_size=32,
+                                          shuffle=True, num_workers=2)
+                              
+        
+        
+        acc = include.train(trainloader, self.batch_size, self.lr, self.optimizer, self.epoch)
+        self.Accuracy_Box.setValue(acc)
         
 
 
 
-
-  
-
     def click_test_Button(self):
         print("click_test_Button")
 
+
+    def click_inference_Button(self):
+        print("click inference Button")
+        choose_index = int(self.choose_index.toPlainText())
+        print(choose_index)
+        self.load_data()
+        model = models.vgg16()
+        model.classifier._modules['6'] = nn.Linear(in_features=4096, out_features=10, bias=True)
+
+        model.load_state_dict(torch.load(os.path.join(os.path.dirname(os.path.abspath(__file__)),f'data/vgg16.pth')))
+        model.eval()
+        f = plt.figure()
+        def imshow(img):
+            img = img / 2 + 0.5     # unnormalize
+            npimg = img.numpy()
+            
+            plt.imshow(np.transpose(npimg, (1, 2, 0)))
+            f.show() 
+
+
+        # get some random training images
+        images = self.testset[choose_index][0]
+        
+        # show images
+        imshow(torchvision.utils.make_grid(images))
+        output = model(self.testset[choose_index][0].unsqueeze(0))
+
+        _, predict = torch.max(output.data, 1)
+
+        # print(self.classes[predict])
+        sm = torch.nn.Softmax()
+        probabilities = sm(output) 
+        print(self.classes[predict])
+        x = np.asarray(self.classes)
+        n = plt.figure()
+        plt.bar(x, probabilities.detach().numpy()[0])
+        n.show()
+        
+        
 
     def click_transformation_Button(self):
         print("click_transformation_Button")

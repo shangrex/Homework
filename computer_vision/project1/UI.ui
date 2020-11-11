@@ -17,7 +17,7 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>20</x>
       <y>120</y>
       <width>151</width>
       <height>601</height>
@@ -82,10 +82,10 @@
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>180</x>
       <y>120</y>
       <width>151</width>
-      <height>591</height>
+      <height>601</height>
      </rect>
     </property>
     <property name="title">
@@ -134,10 +134,10 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>520</x>
+      <x>340</x>
       <y>120</y>
       <width>171</width>
-      <height>591</height>
+      <height>601</height>
      </rect>
     </property>
     <property name="title">
@@ -225,7 +225,7 @@
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>770</x>
+      <x>520</x>
       <y>120</y>
       <width>241</width>
       <height>591</height>
@@ -379,6 +379,130 @@
      </property>
     </widget>
    </widget>
+   <widget class="QGroupBox" name="groupBox5">
+    <property name="geometry">
+     <rect>
+      <x>779</x>
+      <y>119</y>
+      <width>191</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>5. train</string>
+    </property>
+    <widget class="QPushButton" name="showimages_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>100</y>
+       <width>191</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1. Show Train Images</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="showparameters_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>210</y>
+       <width>191</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>2. Show Hyperparameters</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="showmodel_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>350</y>
+       <width>191</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>3. Show Model Structure </string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="showaccuracy_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>400</y>
+       <width>191</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>4. Show Accuracy</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="test_Button">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>490</y>
+       <width>191</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>5. Test</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="Accuracy_Box">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>430</y>
+       <width>191</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="choose_index">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>530</y>
+       <width>71</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="inference_pushButton">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>560</y>
+       <width>89</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>inference</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>540</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Text image index</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -386,7 +510,7 @@
      <x>0</x>
      <y>0</y>
      <width>1073</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
