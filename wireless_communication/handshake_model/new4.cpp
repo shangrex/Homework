@@ -32,7 +32,7 @@ int main(int argc, char*argv[]){
     double lam[3];
     string all_policy[4];
     double speed[4][2];
-    policy = "my_policy";
+    policy = "Best";
     initial(bs, lam, all_policy, speed);
     start = clock();
     for(int j = 0; j < 4; j++){
@@ -127,8 +127,6 @@ void exp(int total_time, double l, double bs[4][2], string policy, string exp_na
                     c.bs = get_tower(c.x, c.y, bs);
                     c.power = get_strength(c.x, c.y, c.bs, bs);
                     car.push_back(c);
-                    // cout << c.x << " " << c.y << " " << c.bs << " " << c.power << endl;
-
                     x++;
                 }
                 if(sim_in() <= l){
@@ -138,7 +136,6 @@ void exp(int total_time, double l, double bs[4][2], string policy, string exp_na
                     c.way = 'r';
                     c.bs = get_tower(c.x, c.y, bs);
                     c.power = get_strength(c.x, c.y, c.bs, bs);
-                    // cout << c.x << " " << c.y << " " << c.bs << " " << c.power << endl;
                     car.push_back(c);
                     x++;
                 }
@@ -295,12 +292,7 @@ void exp(int total_time, double l, double bs[4][2], string policy, string exp_na
                 car.erase(car.begin()+i);                
             }
         }
-        // for(int i = 0 ; i < car.size(); i++){
-        //     if(car[i].x < 0 || car[i].x > 1000 || car[i].y < 0 || car[i].y > 1000){
-        //         // cout << "holy shit" << endl;
-        //     }
-        //     // cout << car[i].x << " " << car[i].y <<  " " << car[i].bs << " "<< car[i].power << " " <<car[i].power << endl;
-        // }
+
         //add
         total_car += car.size();
         for(int i = 0 ; i < car.size(); i++){
@@ -327,54 +319,6 @@ double sim_in(){
 double get_random(){
     return (double)rand()/RAND_MAX;
 }
-// int sim_way(int way){
-//     double select = (double)rand()/RAND_MAX;
-//     if(way == 0){
-//         if(get_random() <= 0.6){
-//             return 0;
-//         }
-//         else if(get_random() <= 0.8 && get_random() >= 0.6){
-//             return 2;
-//         }
-//         else{
-//             return 3;
-//         }
-//     }
-//     else if(way == 1){
-//         if(get_random() <= 0.6){
-//             return 1;
-//         }
-//         else if(get_random() <= 0.8 && get_random() >= 0.6){
-//             return 2;
-//         }
-//         else {
-//             return 3;
-//         }
-
-//     }
-//     else if(way == 2){
-//         if(get_random() <= 0.6){
-//             return 2;
-//         }
-//         else if(get_random() <= 0.8 && get_random() >= 0.6){
-//             return 0;
-//         }
-//         else {
-//             return 1;
-//         }
-//     }
-//     else{
-//         if(get_random() <= 0.6){
-//             return 3;
-//         }
-//         else if(get_random() <= 0.8 && get_random() >= 0.6){
-//             return 0;
-//         }
-//         else {
-//             return 1;
-//         }
-//     }
-// }
 
 char sim_way(char way){
     double select = (double)rand()/RAND_MAX;
