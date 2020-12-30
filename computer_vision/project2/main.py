@@ -7,7 +7,7 @@ import numpy as np
 import glob
 import matplotlib.pyplot as plt
 from resnet import resnet_train, resnet_show, resnet_test, resnet_resize_train
-
+import math
 
 class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
     def __init__(self, parent=None):
@@ -20,7 +20,7 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
         self.find_corner_button.clicked.connect(self.click_find_corner)
         self.find_intrinstic_button.clicked.connect(self.click_find_intrinstic)
         self.find_extrinstic_button.clicked.connect(self.click_find_extrinstic)
-
+        self.find_distortion_button.clicked.connect(self.click_find_distortion_button)
         choices = []
         for i in range(15):
             choices.append(str(i+1))
@@ -94,22 +94,23 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
     def click_augmented_reality(self):
         print("click_augmented_reality")
         arl = []
-        f_pattern = open("config2.txt", "r")
-        s = ""
-        cor = []
-        axis = np.float32([[3,-3,3], [1,1,0], [3,5,0], [5, 1, 0]]).reshape(-1,3)
+        # f_pattern = open("config2.txt", "r")
+        # s = ""
+        # cor = []
+        axis = np.float32([[3,3,-3], [1,1,0], [3,5,0], [5, 1, 0]])
         # axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
 
         for i in range(5):
             x = cv2.imread("Datasets/Q3_Image/{}.bmp".format(i+1))
-            x = cv2.resize(x, (1024, 1024), interpolation=cv2.INTER_AREA)
+            # x = cv2.resize(x, (1024, 1024), interpolation=cv2.INTER_AREA)
             arl.append(x)
             #read pattern
-            s = f_pattern.readline()
-            cor = s.split(" ")
-            x = int(cor[0])
-            y = int(cor[1])
-            
+            # s = f_pattern.readline()
+            # cor = s.split(" ")
+            # x = int(cor[0])
+            # y = int(cor[1])
+            x = 8
+            y = 11 
             print("{} bmp image".format(i+1))
             criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
@@ -117,11 +118,12 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
             imgpoints = []
 
             objp = np.zeros((x*y,3), np.float32)
-            objp[:,:2] = np.mgrid[0:x,0:y].T.reshape(-1,2)
+            objp[:,:2] = np.mgrid[0:y,0:x].T.reshape(-1,2)
+            print("objp", objp)
             gray = cv2.cvtColor(arl[i],cv2.COLOR_BGR2GRAY)
 
             # Find the chess board corners
-            ret, corners = cv2.findChessboardCorners(gray,(x, y), None)
+            ret, corners = cv2.findChessboardCorners(gray,(y, x), None)
 
             # If found, add object points, image points (after refining them)
             if ret == True:
@@ -129,7 +131,7 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
 
                 corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
                 imgpoints.append(corners2)
-
+                print("imgpoints", imgpoints)
                 # Draw and display the corners
                 # img = cv2.drawChessboardCorners(arl[i], (x, y), corners2,ret)
 
@@ -144,7 +146,8 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
 
                 imgpts, jac = cv2.projectPoints(axis, rvecs, tvecs, mtx, dist)
                 print(imgpts)
-                img = self.draw(arl[i],corners2,imgpts)
+                img = self.draw(arl[i],corners2,imgpts )
+                img = cv2.resize(img, (1024, 1024), interpolation=cv2.INTER_AREA)
                 cv2.imshow("img{}".format(i+1),img)
 
             else:
@@ -162,11 +165,19 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
             print(x, y)
             # drawing = True
             x1, y1 = x, y
+            self.disparity = abs(self.disparity)
             print(self.disparity[x1, y1])
+            dis = self.disparity[x1, y1]
             # radius = int(math.hypot(x - x1, y - y1))
             # cv2.circle(self.disparity, (x1,y1), 100, (255, 0, 0), 1)
-            self.depth = baseline * focal_length / self.disparity[x1, y1]
-            text = "Disparity: {} pixels".format(self.disparity[x1, y1])
+            dis = self.disparity[x1, y1]
+            dis_max = self.disparity.max()
+            dis_min = self.disparity.min()
+            dis = (dis-dis_min)/(dis_max-dis_min)*255
+            print(dis_max)
+            print(dis_min)
+            self.depth = baseline * focal_length / (abs(dis)+123)
+            text = "Disparity: {} pixels".format(abs(dis))
             text2 = "Depth: {} mm".format(self.depth)            
             font = cv2.FONT_HERSHEY_SIMPLEX 
             org = (50, 50) 
@@ -201,11 +212,16 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
         cv2.setMouseCallback(windowName, self.draw_tag)
         cv2.imshow(windowName, self.nor_disparity)
 
+    def click_find_distortion_button(self):
+        print("click find distortion button")
+        for i in range(15):
+            print("distortion matrix: {}.bmp".format(i+1),self.calibration_image_dis[i])
+    
 
     def display(self):
         self.extrinstic_pic_index = self.extrinstic_pic_combobox.currentIndex()+1
         print("extrinstic index", self.extrinstic_pic_index)
-
+    
     def click_find_extrinstic(self):
         print("click_find_extrinstic")
         # print(np.add(self.calibration_image_r[i], self.calibration_image_t[i]))
@@ -222,10 +238,11 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
 
     def load_Q2_img(self):
         print("load Q2 img")
+        self.calibration_image = [0 for i in range(15)]
         for i in range(15):
             x = cv2.imread("Datasets/Q2_Image/{}.bmp".format(i+1))
-            x = cv2.resize(x, (1024, 1024), interpolation=cv2.INTER_AREA)
-            self.calibration_image.append(x)
+            # x = cv2.resize(x, (1024, 1024), interpolation=cv2.INTER_AREA)
+            self.calibration_image[i] = x
 
     def click_find_intrinstic(self):
         print("click find intrinstic")
@@ -233,27 +250,30 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
 
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-        f_pattern = open("config2.txt", "r")
-        s = ""
-        cor = []
-        objpoints = []
-        imgpoints = []
+        # f_pattern = open("config2.txt", "r")
+        # s = ""
+        # cor = []
+
         for i in range(15):
             #read pattern
-            s = f_pattern.readline()
-            cor = s.split(" ")
-            x = int(cor[0])
-            y = int(cor[1])
+            # s = f_pattern.readline()
+            # cor = s.split(" ")
+            # x = int(cor[0])
+            # y = int(cor[1])
+            objpoints = []
+            imgpoints = []
+            x = 8
+            y = 11
             
             print("{} bmp image".format(i+1))
 
 
             objp = np.zeros((x*y,3), np.float32)
-            objp[:,:2] = np.mgrid[0:x,0:y].T.reshape(-1,2)
+            objp[:,:2] = np.mgrid[0:y,0:x].T.reshape(-1,2)
             gray = cv2.cvtColor(self.calibration_image[i],cv2.COLOR_BGR2GRAY)
 
             # Find the chess board corners
-            ret, corners = cv2.findChessboardCorners(gray,(x, y), None)
+            ret, corners = cv2.findChessboardCorners(gray,(y, x), None)
 
             # If found, add object points, image points (after refining them)
             if ret == True:
@@ -263,7 +283,7 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
                 imgpoints.append(corners2)
 
                 # Draw and display the corners
-                img = cv2.drawChessboardCorners(self.calibration_image[i], (x, y), corners2,ret)
+                # img = cv2.drawChessboardCorners(self.calibration_image[i], (y, x), corners2,ret)
                 # cv2.imshow('img{}'.format(count),img)
                 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
                 print("Intristic")
@@ -274,26 +294,44 @@ class ExampleApp(QtWidgets.QMainWindow, UI.Ui_MainWindow):
             else:
                 print("Error pattern in corner")
 
-            objpoints = []
-            imgpoints = []
+      
 
     def click_find_corner(self):
         print("click_find_corner")
+        self.calibration_image = [i for i in range(15)]
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
+        print(len(self.calibration_image))
         for i in range(15):
             self.calibration_image[i] = cv2.imread("Datasets/Q2_Image/{}.bmp".format(i+1))
             gray = cv2.cvtColor(self.calibration_image[i], cv2.COLOR_BGR2GRAY)
-            gray = np.float32(gray)
-            dst = cv2.cornerHarris(gray,5,3,0.04)
-            dst = cv2.dilate(dst,None)
+            #method 1
+            # gray = np.float32(gray)
+            # dst = cv2.cornerHarris(gray,5,3,0.04)
+            # dst = cv2.dilate(dst,None)
 
             
             # # Threshold for an optimal value, it may vary depending on the image.
-            self.calibration_image[i][dst>0.01*dst.max()]=[0,0,255]
-            self.calibration_image[i] = cv2.resize(self.calibration_image[i], (1024, 1024), interpolation=cv2.INTER_AREA)
+            # self.calibration_image[i][dst>0.01*dst.max()]=[0,0,255]
+            # self.calibration_image[i] = cv2.resize(self.calibration_image[i], (1024, 1024), interpolation=cv2.INTER_AREA)
 
-            cv2.imshow("find corner{}".format(i+1),self.calibration_image[i])
+            # cv2.imshow("find corner{}".format(i+1),self.calibration_image[i])
         
+            #method 2
+            # Find the chess board corners
+            imgpoints = []
 
+            x = 8
+            y = 11
+            ret, corners = cv2.findChessboardCorners(gray,(y, x), None)
+            if ret == True:
+                corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
+                imgpoints.append(corners2)
+
+                # Draw and display the corners
+                img = cv2.drawChessboardCorners(self.calibration_image[i], (y, x), corners2,ret)
+                img = cv2.resize(img, (1024, 1024), interpolation=cv2.INTER_AREA)
+                cv2.imshow('imgcorner{}'.format(i+1),img)
         
  
         
