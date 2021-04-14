@@ -10,13 +10,15 @@ from keras.layers import LSTM
 from keras.layers import Dropout
 import math
 from keras.callbacks import EarlyStopping
-seed_value = 12345
+seed_value = 123456789
 import random
 random.seed(seed_value)
 import numpy as np
 np.random.seed(seed_value)
 import tensorflow as tf
 tf.random.set_seed(seed_value)
+import os
+os.environ['PYTHONHASHSEED']=str(seed_value)
 
 def buildManyToOneModel(shape):
     model = Sequential()
@@ -119,10 +121,10 @@ if __name__ == '__main__':
 
 
     #training
-    x_train, y_train = create_data(train,5, 1)
+    x_train, y_train = create_data(train,4, 1)
     regressor5 = buildManyToOneModel(x_train.shape)
-    callback = EarlyStopping(monitor="loss", patience=200, verbose=1, mode="auto")
-    # regressor5.fit(x_train, y_train, epochs = 500, callbacks=[callback])
+    callback = EarlyStopping(monitor="loss", patience=400, verbose=1, mode="auto")
+    regressor5.fit(x_train, y_train, epochs = 10000, callbacks=[callback])
 
     # The following part is an example.
     # You can modify it at will.
@@ -134,7 +136,7 @@ if __name__ == '__main__':
     test_length = len(test)
     print(test_length)
     all_data = train.append(test)
-    x_test, y_test = create_data(all_data, 5, 1)
+    x_test, y_test = create_data(all_data, 4, 1)
     x_test = x_test[-test_length:]
     y_test = y_test[-test_length:]
     # print(x_test)
@@ -149,7 +151,9 @@ if __name__ == '__main__':
     for i in range(test_length-1):
         action, stock = manipulate(stock, result[i+1]-result[i])
         actions.append(action)
-        output_file.write(str(action)+'\n')
+        output_file.write(str(action))
+        if i < test_length-2:
+            output_file.write('\n')
     
     output_file.close()
     # with open(args.output, 'w') as output_file:
@@ -160,3 +164,5 @@ if __name__ == '__main__':
 
     #         # this is your option, you can leave it empty.
     #         trader.re_training(i)
+
+    regressor5.save('5')
