@@ -82,21 +82,25 @@ ws [ \t]+
 {fnumber}        { printf("%-8s \t %s\n", yytext, "FLOAT_LIT"); }
  
  /*	string */
-"\""                        { printf("%-8s \t %s\n", yytext, "QUOTA"); BEGIN INPUT_STRING1; }
-<INPUT_STRING1>[^"\\]*	    { printf("%s", yytext); BEGIN INPUT_STRING1;}
-<INPUT_STRING1>"\\"+[\"|\\n]    { printf("%s", yytext); BEGIN INPUT_STRING1;}
-<INPUT_STRING1>[\"]         { printf(" \t %s\n%-8s \t %s\n", "STRING_LIT", yytext, "QUOTA"); BEGIN 0; }
+\"([^"]|(\\\"))*\"  { printf("%-8s \t %s\n","\"", "QUOTA");
+                            int slen = strlen(yytext);
+                            char s[slen+1];
+                            strncpy(s, yytext+1, slen-2);
+                            s[slen-2] = '\0';
+                            printf("%-8s \t %s\n", s, "STRING_LIT"); 
+                            printf("%-8s \t %s\n", "\"", "QUOTA");
+                            }
 
  /*C Comment */
 "\/\*"                   { printf("%s", yytext); BEGIN COMMENT1; }
 <COMMENT1>[^(\*\/&\n)]*  { printf("%s", yytext); BEGIN COMMENT1; }
 <COMMENT1>[\n]           { line_num++; comment_num++; printf(" \t %s\n", "C Comment"); BEGIN COMMENT1; }
-<COMMENT1>(\*\/)         { printf("%s \t %s\n", yytext, "C Comment"); BEGIN COMMENT2; }
-<COMMENT2>[\n]           { comment_num++; BEGIN 0; }
+<COMMENT1>(\*\/)         { comment_num++; printf("%s \t %s\n", yytext, "C Comment"); BEGIN COMMENT2; }
+<COMMENT2>[\n]           { line_num++;  BEGIN 0; }
  
  /*	CPP Comment */
-"\/\/"              { line_num++; comment_num++; printf("%s", yytext); BEGIN CPPCOMMENT1; }
-<CPPCOMMENT1>[^\n]* { printf("%-8s \t %s\n", yytext, "C++ Comment"); BEGIN CPPCOMMENT2; }
+"\/\/"              { printf("%s", yytext); BEGIN CPPCOMMENT1; }
+<CPPCOMMENT1>[^\n]* { printf("%s \t %s\n", yytext, "C++ Comment"); BEGIN CPPCOMMENT2; }
 <CPPCOMMENT2>[\n]   { line_num++; comment_num++; BEGIN 0; }
 
 
