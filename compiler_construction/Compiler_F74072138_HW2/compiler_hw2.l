@@ -50,6 +50,13 @@ newline [\n]
 "string"  	{ return STRING; }
 "bool"  	{ return BOOL; }
 
+ /*  statement */
+"while"     { return WHILE; }
+"if"        { return IF; }
+"else"      { return ELSE; }
+"else if"   { return ELIF; }
+"for"       { return FOR; }
+
  /*  arithmetic */
 "!"     { return NOT; }
 "+"     { return ADD; }
@@ -63,6 +70,8 @@ newline [\n]
 ")"     { return RPAREN;  }
 "["     { return LBRACK; }
 "]"     { return RBRACK; }
+"{"     { return LBRACE; }
+"}"     { return RBRACE; }
 "="     { return ASGN;}
 ">"     { return GTR; }
 "<"     { return LSS; }
@@ -72,6 +81,12 @@ newline [\n]
 "!="    { return NEQ; }
 "&&"    { return AND; }
 "||"    { return OR; }
+"+="        { return ADD_ASSIGN; }
+"-="        { return SUB_ASSIGN; }
+"*="        { return MUL_ASSIGN; }
+"/="        { return QUO_ASSIGN; }
+"%="        { return REM_ASSIGN; }
+
 
 {inumber}   { yylval.i_val = atoi(yytext);
                 return INT_LIT;
