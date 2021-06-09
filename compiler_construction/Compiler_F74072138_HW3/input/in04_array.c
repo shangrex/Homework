@@ -1,0 +1,20 @@
+int x[3];
+x[0] = 1 + 2;
+x[1] = x[0] - 1;
+x[2] = x[2 - 1] * 3;
+print(x[0]);
+print("\n");
+print(x[1]);
+print("\n");
+print(x[2]);
+print("\n");
+
+float y[3];
+y[0] = 1.0 + 2.0;
+y[1] = y[0] - 1.0;
+y[2] = y[2 - 1] / 3.0;
+print(y[0]);
+print("\n");
+print(y[1]);
+print("\n");
+print(y[2]);
