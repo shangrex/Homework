@@ -38,21 +38,64 @@ newline		[\n]
 <STR>[^\"]* { yylval.s_val = strdup(yytext);
                 return STRING_LIT;
             }
-"+"         { return '+'; }
-"-"         { return '-'; }
-"*"         { return '*'; }
-
 "print"     { return PRINT; }
-
+ /* Declaration Keywords */
+"int"		{ return INT; }
+"float"  	{ return FLOAT; }
+"string"  	{ return STRING; }
+"bool"  	{ return BOOL; }
+ /*  statement */
+"while"     { return WHILE; }
+"if"        { return IF; }
+"else"      { return ELSE; }
+"else if"   { return ELIF; }
+"for"       { return FOR; }
+ /*  arithmetic */
+"!"     { return NOT; }
+"+"     { return ADD; }
+"-" 	{ return SUB; }
+"*" 	{ return MUL; }
+"/" 	{ return QUO; }
+"%"     { return REM; }
+"++"    { return INC; }
+"--"    { return DEC; }
+"("     { return LPAREN;  }
+")"     { return RPAREN;  }
+"["     { return LBRACK; }
+"]"     { return RBRACK; }
+"{"     { return LBRACE; }
+"}"     { return RBRACE; }
+"="     { return ASGN;}
+">"     { return GTR; }
+"<"     { return LSS; }
+">="    { return GEQ; }
+"<="    { return LEQ; }
+"=="    { return EQL; }
+"!="    { return NEQ; }
+"&&"    { return AND; }
+"||"    { return OR; }
+"+="        { return ADD_ASSIGN; }
+"-="        { return SUB_ASSIGN; }
+"*="        { return MUL_ASSIGN; }
+"/="        { return QUO_ASSIGN; }
+"%="        { return REM_ASSIGN; }
 {inumber}   { yylval.i_val = atoi(yytext);
                 return INT_LIT;
             }
-
-{id}        { yylval.ctr.id_name = strdup(yytext);
-                return IDENT;
+"true"  { yylval.s_val = "TRUE";
+            return BOOL_LIT;
+        }
+"false" { yylval.s_val = "FALSE";
+            return BOOL_LIT;
+        }
+{fnumber}   { yylval.f_val = atof(yytext);
+                return FLOAT_LIT;
+            }
+{id}        { yylval.s_val = strdup(yytext);
+              return IDENT;
             }
 [;]         { return SEMICOLON; }
-[\n]        {;}
+[\n]        { ; }
 <<EOF>>     { static int once = 0;
                 if (once++) {
                     yyterminate();

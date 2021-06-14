@@ -8,8 +8,8 @@ x = y;
 x % y;
 y % 3;
 
-3 && true
-false || 2 + 2
+3 && true;
+false || 2 + 2;
 
 while(1.0){
 	print(1.0);
