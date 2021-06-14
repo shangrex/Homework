@@ -217,6 +217,7 @@ PIDENT
         Symbol table1 = lookup_symbol($1);
 
         if(strcmp(table1.name, "") == 0){
+            HAS_ERROR = true;
             printf("error:%d: undefined: %s\n", yylineno, $1);
         }
         else {
@@ -250,24 +251,12 @@ AIDENT
         Symbol table1 = lookup_symbol($1);
 
         if(strcmp(table1.name, "") == 0){
+            HAS_ERROR = true;
             printf("error:%d: undefined: %s\n", yylineno, $1);
         }
         else {
             printf("IDENT (name=%s, address=%d)\n", table1.name, table1.address);
             tmp_name = table1.name;
-            // if(strcmp(table1.type, "int") == 0){
-            //     codegen("istore %d\n", table1.address);
-            // }
-            // if(strcmp(table1.type, "float") == 0){
-            //     codegen("fstore %d\n",table1.address);
-            // }
-            // if(strcmp(table1.type, "string") == 0){
-            //     codegen("astore %d\n",table1.address);
-            // }
-            // if(strcmp(table1.type, "bool") == 0){
-            //     codegen("istore %d\n",table1.address);
-
-            // }
         }
         if(strcmp(table1.type, "array") == 0){
             $$ = table1.element_type;
@@ -304,6 +293,7 @@ DeclarationStmt
         }
         else {
             Symbol table1 = lookup_symbol($2);
+            HAS_ERROR = true;
             printf("error:%d: %s redeclared in this block. previous declaration at line %d\n", yylineno, $2, table1.lineno);
         }
         $$ = $1;
@@ -366,6 +356,7 @@ For_stmt
 If_stmt
     : IF LPAREN Arithmetic_stmt RPAREN {
         if(strcmp($3, "bool") != 0){
+            HAS_ERROR = true;
            printf("error:%d: non-bool (type %s) used as for condition\n", yylineno+1, $3);
         }
 
@@ -373,6 +364,7 @@ If_stmt
     }
     | ELIF LPAREN Arithmetic_stmt RPAREN {
         if(strcmp($3, "bool") != 0){
+            HAS_ERROR = true;
            printf("error:%d: non-bool (type %s) used as for condition\n", yylineno+1, $3);
         }
         scope_number++;
@@ -385,6 +377,7 @@ If_stmt
 Loop_stmt
     : Tag_while LPAREN Arithmetic_stmt RPAREN {
         if(strcmp($3, "bool") != 0){
+            HAS_ERROR = true;
            printf("error:%d: non-bool (type %s) used as for condition\n", yylineno+1, $3);
         }
         codegen("ifeq label%d\n", label);
@@ -434,6 +427,7 @@ INCDEC_stmt
 Assignment_stmt
     : AIDENT ASGN Arithmetic_stmt {
         if(strcmp($1, $3) != 0 && strcmp($1,"") != 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: ASSIGN (mismatched types %s and %s)\n", yylineno , $1, $3);
         }
         else {
@@ -458,6 +452,7 @@ Assignment_stmt
         printf("ADD_ASSIGN\n");
     }
     | Const ADD_ASSIGN Arithmetic_stmt {
+        HAS_ERROR = true;
         printf("error:%d: cannot assign to %s\n",yylineno, $1);
         printf("ADD_ASSIGN\n");
     }
@@ -481,9 +476,11 @@ Assignment_stmt
 Arithmetic_stmt
     : Arithmetic_stmt OR AND_Arithmetic_stmt {
         if(strcmp($3, "bool") != 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: (operator OR not defined on %s)\n", yylineno, $3);
         }
         else if(strcmp($1, "bool") != 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: (operator OR not defined on %s)\n", yylineno, $1);
         }
         printf("OR\n");
@@ -498,9 +495,11 @@ Arithmetic_stmt
 AND_Arithmetic_stmt
     : AND_Arithmetic_stmt AND Compare_Arithmetic_stmt {
         if(strcmp($3, "bool") != 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: (operator AND not defined on %s)\n", yylineno, $3);
         }
         else if(strcmp($1, "bool") != 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: (operator AND not defined on %s)\n", yylineno, $1);
         }
         printf("AND\n");
@@ -588,6 +587,7 @@ Compare_Arithmetic_stmt
 AS_Arithmetic_stmt
     : AS_Arithmetic_stmt ADD MQR_Arithmetic_stmt {
         if(strcmp($1, $3) != 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: ADD (mismatched types %s and %s)\n", yylineno , $1, $3);
         }
         if(strcmp($1, "int") == 0 && strcmp($3, "int") == 0){
@@ -600,6 +600,7 @@ AS_Arithmetic_stmt
     }
     | AS_Arithmetic_stmt SUB MQR_Arithmetic_stmt {
         if(strcmp($1, $3) != 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: SUB (mismatched types %s and %s)\n", yylineno , $1, $3);
         }
         if(strcmp($1, "int") == 0 && strcmp($3, "int") == 0){
@@ -634,9 +635,11 @@ MQR_Arithmetic_stmt
     }
     | MQR_Arithmetic_stmt REM Unary_stmt {
         if(strcmp($3, "float") == 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: (operator REM not defined on %s)\n", yylineno, $3);
         }
         else if(strcmp($1, "float") == 0){
+            HAS_ERROR = true;
             printf("error:%d: invalid operation: (operator REM not defined on %s)\n", yylineno, $1);
         }
         printf("REM\n");
