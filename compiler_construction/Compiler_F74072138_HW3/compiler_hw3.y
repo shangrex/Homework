@@ -36,8 +36,6 @@
     } Symbol;
 
     Symbol symboltable[10][20];
-    Symbol tmp_symboltable[20];
-    int tmp_address = 0;
     // store each row variable count of symboltable  
     int symbol_index[10];
     // store current scope number
@@ -48,20 +46,25 @@
     int index_number = 0;
     int print_dump = 0;
     static int num_address = 0;
-    int label = 0;
-    int scope_lable_in[10];
-    int scope_lable_out[10];
-    char *tmp_name;
-
+    int label = 0; //the jump tag label
+    int lable_in[10];
+    int lable_out[10];
+    int if_in[10];
+    int if_out[10];
+    int if_label_in = 0;
+    int if_label_out = 0;
+    int scope_if_in = 0;
+    int scope_if_out = 0;
        /* Symbol table function - you can add new function if needed. */
     static void create_symbol();
     static void insert_symbol(char* name, char* type, int scope_number, int index_number, char* element_type);
     static int check_symbol(char* name);
     static Symbol lookup_symbol(char* name);
     static void dump_symbol();
+    static char* convert_type();
 %}
 
-/* %error-verbose */
+%error-verbose
 
 /* Use variable or self-defined structure to represent
  * nonterminal and token type
@@ -72,13 +75,15 @@
     char *s_val;
     /* ... */
 }
+
 /* Token without return */
 %token INT FLOAT BOOL STRING 
 %token ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN QUO_ASSIGN REM_ASSIGN
 %token ADD SUB MUL QUO REM INC DEC GTR LSS GEQ LEQ EQL NEQ NOT AND OR
 %token ASGN WHILE IF ELSE ELIF FOR
-%token SEMICOLON NEWLINE
+%token SEMICOLON
 %token PRINT LPAREN RPAREN RBRACK LBRACK LBRACE RBRACE
+
 
 /* Token with return, which need to sepcify type */
 %token <i_val> INT_LIT
@@ -87,13 +92,15 @@
 %token <s_val> BOOL_LIT
 %token <s_val> IDENT
 
+
 /* Nonterminal with return, which need to sepcify type */
 %type <s_val> TypeName
 %type <s_val> Type Const
 %type <s_val> DeclarationStmt
 %type <s_val> Literal INCDEC_stmt Paren_stmt Unary_stmt MQR_Arithmetic_stmt AS_Arithmetic_stmt
 %type <s_val> Compare_Arithmetic_stmt AND_Arithmetic_stmt Arithmetic_stmt Execution_stmt  Brak_stmt PIDENT
-%type <s_val> Tag_while AIDENT
+%type <s_val> AIDENT Tag_while Assign_add_tmp Assign_sub_tmp Assign_mul_tmp Assign_quo_tmp Assign_rem_tmp Tag_for
+/* %type <s_val>  If_first_con If_second_con If_first If_second If_third */
 /* Yacc will start at this nonterminal */
 %start Program
 
@@ -101,25 +108,20 @@
 %%
 
 Program
-    : Program StatementList 
-    | StatementList 
+    : Program StatementList {
+        INDENT--;
+        codegen(" ;%d \n", yylineno);
+        INDENT++;
+    }
+    | StatementList {
+        INDENT--;
+        codegen(" ;%d \n", yylineno);
+        INDENT++;
+    } 
 ;
 
 StatementList
-    : Statement {
-    for(int i = 0;i < tmp_address; i++){
-            Symbol x;
-            x.name="";
-            x.type="";
-            x.address = 0;
-            x.lineno = 0;
-            x.element_type = "";
-            tmp_symboltable[i] = x;
-        }
-        tmp_address = 0;
-    
-    }
-
+    : Statement 
 ;
 
 Type
@@ -138,7 +140,6 @@ Literal
     | PIDENT 
     | LPAREN Type RPAREN FLOAT_LIT {
         printf("FLOAT_LIT %f\n", $4);
-
         char * t;
         if(strcmp($2, "float") == 0){
             t = "F";
@@ -147,6 +148,10 @@ Literal
             t = "I";
         }
         printf("F to %s\n", t);
+        if(strcmp($2, "int") == 0){
+            codegen("ldc %f\n", $4);
+            codegen("f2i\n");
+        }
         $$ = $2;
     }
     | LPAREN Type RPAREN INT_LIT {
@@ -160,6 +165,10 @@ Literal
             t = "I";
         }
         printf("I to %s\n", t);
+        if(strcmp($2, "float") == 0){
+            codegen("ldc %d\n", $4);
+            codegen("i2f\n");
+        }
         $$ = $2;
     }
     | LPAREN Type RPAREN IDENT {
@@ -181,6 +190,29 @@ Literal
             f = "I";
         }
         printf("%s to %s\n", f, t);
+
+
+        if(strcmp($2, "float") == 0 && strcmp(table1.type, "int") == 0){
+            codegen("iload %d\n", table1.address);
+            codegen("i2f\n");
+        }
+        if(strcmp($2, "int") == 0 && strcmp(table1.type, "float") == 0){
+            codegen("fload %d\n", table1.address);
+            codegen("f2i\n");
+        }
+        $$ = $2;
+    }
+    | LPAREN Type RPAREN PIDENT LBRACK Arithmetic_stmt RBRACK {
+        Symbol table1 = lookup_symbol($4);
+
+        if(strcmp(table1.element_type, "int") == 0 && strcmp($2, "float") == 0){
+            codegen("iaload\n");
+            codegen("i2f\n");
+        }
+        else if(strcmp(table1.element_type, "float") == 0 && strcmp($2, "int") == 0){
+            codegen("faload\n");
+            codegen("f2i\n");
+        }
         $$ = $2;
     }
 ;
@@ -211,13 +243,35 @@ Const
         }
         $$ = "bool";
     }
+;
+AIDENT
+    : IDENT {
+        Symbol table1 = lookup_symbol($1);
 
+        if(strcmp(table1.name, "") == 0){
+            printf("error:%d: undefined: %s\n", yylineno, $1);
+        }
+        else {
+            printf("IDENT (name=%s, address=%d)\n", table1.name, table1.address);
+            if(strcmp(table1.type, "array") == 0){
+                codegen("aload %d\n", table1.address);
+            }
+        }
+        
+        if(strcmp(table1.type, "array") == 0){
+            $$ = table1.element_type;
+        }
+        else {
+            $$ = table1.type;
+        }
+        $$ = table1.name;
+    }
+;
 PIDENT
     : IDENT {
         Symbol table1 = lookup_symbol($1);
 
         if(strcmp(table1.name, "") == 0){
-            HAS_ERROR = true;
             printf("error:%d: undefined: %s\n", yylineno, $1);
         }
         else {
@@ -233,7 +287,12 @@ PIDENT
             }
             if(strcmp(table1.type, "bool") == 0){
                 codegen("iload %d\n",table1.address);
-
+            }
+            if(strcmp(table1.element_type, "int") == 0){
+                codegen("aload %d\n",table1.address);
+            }
+            else if(strcmp(table1.element_type, "float") == 0){
+                codegen("aload %d\n",table1.address);
             }
         }
         if(strcmp(table1.type, "array") == 0){
@@ -242,42 +301,19 @@ PIDENT
         else {
             $$ = table1.type;
         }
-        tmp_symboltable[tmp_address++] = table1;
+        $$ = table1.name;
     }
 ;
 
-AIDENT
-    : IDENT {
-        Symbol table1 = lookup_symbol($1);
-
-        if(strcmp(table1.name, "") == 0){
-            HAS_ERROR = true;
-            printf("error:%d: undefined: %s\n", yylineno, $1);
-        }
-        else {
-            printf("IDENT (name=%s, address=%d)\n", table1.name, table1.address);
-            tmp_name = table1.name;
-        }
-        if(strcmp(table1.type, "array") == 0){
-            $$ = table1.element_type;
-        }
-        else {
-            $$ = table1.type;
-        }
-        tmp_symboltable[tmp_address++] = table1;
-    }
-;
 
 Statement
-    : DeclarationStmt SEMICOLON
+    : DeclarationStmt 
     | Expression 
-    | Compound_stmt
-
 ;
 
 
 DeclarationStmt
-    : Type IDENT {
+    : Type IDENT SEMICOLON {
         if(check_symbol($2) == 0){
             insert_symbol($2, $1, scope_number, ++symbol_index[scope_number], "");
             Symbol table1 = lookup_symbol($2);
@@ -289,16 +325,19 @@ DeclarationStmt
                 codegen("ldc 0.0\n");
                 codegen("fstore %d\n", table1.address);
             }
-
+            if(strcmp(table1.type, "string") == 0){
+                codegen("ldc \"\"\n");
+                codegen("astore %d\n", table1.address);
+            }
         }
         else {
             Symbol table1 = lookup_symbol($2);
-            HAS_ERROR = true;
+           HAS_ERROR = true;
             printf("error:%d: %s redeclared in this block. previous declaration at line %d\n", yylineno, $2, table1.lineno);
         }
         $$ = $1;
     }
-    | Type IDENT ASGN Arithmetic_stmt {
+    | Type IDENT ASGN Arithmetic_stmt SEMICOLON {
         if(check_symbol($2) == 0){
             insert_symbol($2, $1, scope_number, ++symbol_index[scope_number], "");
             Symbol table1 = lookup_symbol($2);
@@ -316,9 +355,27 @@ DeclarationStmt
             }
         };
     }
-    | Type IDENT LBRACK Arithmetic_stmt RBRACK {
+    | Type IDENT LBRACK Arithmetic_stmt RBRACK SEMICOLON {
         if(check_symbol($2) == 0){
             insert_symbol($2, "array", scope_number, ++symbol_index[scope_number], $1);
+            Symbol table1 = lookup_symbol($2);
+            // printf("%s\n", table1.element_type);
+            if(strcmp(table1.element_type, "int") == 0){
+                codegen("newarray %s\n", table1.element_type);
+                codegen("astore %d\n", table1.address);
+            }
+            if(strcmp(table1.element_type, "float") == 0){
+                codegen("newarray %s\n", table1.element_type);
+                codegen("astore %d\n", table1.address);
+            }
+            if(strcmp(table1.element_type, "string") == 0){
+                codegen("newarray %s\n", table1.element_type);
+                codegen("astore %d\n", table1.address);
+            }
+            if(strcmp(table1.element_type, "bool") == 0){
+                codegen("newarray %s\n", table1.element_type);
+                codegen("istore %d\n", table1.address);
+            }
         };
         $$ = $1;
     }
@@ -329,59 +386,174 @@ Expression
     | Arithmetic_stmt SEMICOLON
     | Execution_stmt SEMICOLON
     | INCDEC_stmt SEMICOLON
-    | Loop_stmt 
-    | If_stmt
-    | For_stmt
+    | Loop_stmt Compound_stmt {
+        codegen(" ; scope number %d\n", scope_number);
+        codegen("goto label%d\n", lable_in[scope_number]);
+        codegen("label%d :\n", lable_out[scope_number]);
+    }
+    | If_stmt 
+    | For_stmt 
 ;
 
 Compound_stmt
-    :  LBRACE RBRACE
+    :  LBRACE RBRACE {
+        scope_number--;
+    }
     | LBRACE Program RBRACE {
         dump_symbol();
         if(scope_number > 0) scope_number--;
         else {
             printf("negative scope number\n");
         }
-        codegen("goto label%d\n", scope_lable_in[scope_number]);
-        codegen("label%d :\n", scope_lable_out[scope_number]);
     }
 ;
 
 For_stmt
-    : FOR LPAREN Assignment_stmt SEMICOLON  Arithmetic_stmt SEMICOLON INCDEC_stmt RPAREN {
+    : Befor Literal INC RPAREN Compound_stmt {
+        char *c_type1 = convert_type($2);
+        Symbol table1 = lookup_symbol($2);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("ldc 1\n");
+            codegen("iadd\n");
+            codegen("istore %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("ldc 1.0\n");
+            codegen("fadd\n");
+            codegen("fstore %d\n", table1.address);
+        }
+        codegen("goto label%d\n", lable_in[scope_number]);
+        codegen("label%d :\n", lable_out[scope_number]);
         scope_number++;
     }
+    | Befor Literal DEC RPAREN Compound_stmt {
+        char *c_type1 = convert_type($2);
+        Symbol table1 = lookup_symbol($2);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("ldc 1\n");
+            codegen("isub\n");
+            codegen("istore %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("ldc 1.0\n");
+            codegen("fsub\n");
+            codegen("fstore %d\n", table1.address);
+        }
+        codegen("goto label%d\n", lable_in[scope_number]);
+        codegen("label%d :\n", lable_out[scope_number]);
+        scope_number++;
+    }
+;
+Befor
+    : Aefor Arithmetic_stmt SEMICOLON {
+        lable_out[scope_number] = label;
+        label++;
+        codegen("ifeq label%d\n", lable_out[scope_number]);
+        scope_number++;
+}
+;
+
+Aefor
+    : FOR LPAREN Assignment_stmt SEMICOLON {
+        codegen("label%d :\n", label);
+        lable_in[scope_number] = label;
+        label++;
+}
 ;
 
 If_stmt
+	: If_con  {
+        codegen("if_label_out%d :\n", if_out[scope_if_out]);
+    }
+	| If_con  If_else {
+        codegen("if_label_out%d :\n", if_out[scope_if_out]);
+    }
+	| If_con  If_elif  If_else {
+        codegen("if_label_out%d :\n", if_out[scope_if_out]);
+    }
+If_con
+    : If_con_con Compound_stmt {
+        scope_if_in--;
+        scope_if_out--;
+        codegen("goto if_label_out%d\n", if_out[scope_if_out]);
+        codegen("if_label_in%d :\n", if_in[scope_if_in]);
+    }
+;
+If_con_con
     : IF LPAREN Arithmetic_stmt RPAREN {
         if(strcmp($3, "bool") != 0){
-            HAS_ERROR = true;
+           HAS_ERROR = true;
            printf("error:%d: non-bool (type %s) used as for condition\n", yylineno+1, $3);
         }
+        else {
+            if_in[scope_if_in] = if_label_in;
+            if_label_in++;
+            codegen("ifeq if_label_in%d\n", if_in[scope_if_in]);
+            scope_if_in++;
 
-        scope_number++;
-    }
-    | ELIF LPAREN Arithmetic_stmt RPAREN {
-        if(strcmp($3, "bool") != 0){
-            HAS_ERROR = true;
-           printf("error:%d: non-bool (type %s) used as for condition\n", yylineno+1, $3);
+            if_out[scope_if_out] = if_label_out;
+            if_label_out++;
+            scope_if_out++;
+            // if_label++;
         }
-        scope_number++;
-    }
-    | ELSE {
         scope_number++;
     }
 ;
-
+If_elif
+    : If_elif_con Compound_stmt{
+        // codegen(" ; scope number %d scope content %d \n", scope_if, if_out[scope_if]);
+        codegen("goto if_label_out%d\n", if_out[scope_if_out]);
+        scope_if_in--;
+        codegen("if_label_in%d :\n", if_in[scope_if_in]);
+    }
+;
+If_elif_con
+    : ELIF LPAREN Arithmetic_stmt RPAREN {
+        if(strcmp($3, "bool") != 0){
+           HAS_ERROR = true;
+           printf("error:%d: non-bool (type %s) used as for condition\n", yylineno+1, $3);
+        }
+        else {
+            if_in[scope_if_in] = if_label_in;
+            if_label_in++;
+            codegen("ifeq if_label_in%d\n", if_in[scope_if_in]);
+            scope_if_in++;
+            // if_label++;
+            // scope_if ++;
+        }
+        scope_number++;
+}
+;
+If_else
+    :  If_else_con Compound_stmt {
+        codegen(" ; end else \n");
+        // codegen("goto if_label%d\n", if_out[scope_if]);
+        scope_if_in--;
+        codegen("goto if_label_out%d\n", if_out[scope_if_out]);
+        codegen("if_label_in%d :\n", if_in[scope_if_in]);
+    }
+;
+If_else_con
+    : ELSE {
+        if_in[scope_if_in] = if_label_in;
+        if_label_in++;
+        codegen("iconst_1\n");
+        codegen("ifeq if_label_in%d\n", if_in[scope_if_in]);
+        scope_if_in++;
+        // if_label ++;
+        // scope_if ++;
+        scope_number++;
+    }    
+;
 Loop_stmt
     : Tag_while LPAREN Arithmetic_stmt RPAREN {
         if(strcmp($3, "bool") != 0){
             HAS_ERROR = true;
            printf("error:%d: non-bool (type %s) used as for condition\n", yylineno+1, $3);
         }
+        codegen(" ; scope number %d\n", scope_number);
         codegen("ifeq label%d\n", label);
-        scope_lable_out[scope_number] = label;
+        lable_out[scope_number] = label;
         label ++;
         scope_number++; 
     }
@@ -389,99 +561,232 @@ Loop_stmt
 
 Tag_while
     : WHILE {
+        codegen(" ; scope number %d\n", scope_number);
         codegen("label%d :\n", label);
-        scope_lable_in[scope_number] = label;
+        lable_in[scope_number] = label;
         label++;
     }
 ;
-
 INCDEC_stmt
     : Literal INC {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
         printf("INC\n");
-        if(strcmp($1, "int") == 0){
+        if(strcmp(c_type1, "int") == 0){
             codegen("ldc 1\n");
             codegen("iadd\n");
-            codegen("istore %d\n", tmp_symboltable[0].address);
+            codegen("istore %d\n", table1.address);
         }
-        if(strcmp($1, "float") == 0){
+        if(strcmp(c_type1, "float") == 0){
             codegen("ldc 1.0\n");
             codegen("fadd\n");
-            codegen("fstore %d\n", tmp_symboltable[0].address);
+            codegen("fstore %d\n", table1.address);
         }
     }
     | Literal DEC {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
         printf("DEC\n");
-        if(strcmp($1, "int") == 0){
+        if(strcmp(c_type1, "int") == 0){
             codegen("ldc 1\n");
             codegen("isub\n");
-            codegen("istore %d\n", tmp_symboltable[0].address);
+            codegen("istore %d\n", table1.address);
         }
-        if(strcmp($1, "float") == 0){
+        if(strcmp(c_type1, "float") == 0){
             codegen("ldc 1.0\n");
             codegen("fsub\n");
-            codegen("fstore %d\n", tmp_symboltable[0].address);
+            codegen("fstore %d\n", table1.address);
         }
     }
 ;
 
 Assignment_stmt
     : AIDENT ASGN Arithmetic_stmt {
-        if(strcmp($1, $3) != 0 && strcmp($1,"") != 0){
-            HAS_ERROR = true;
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, c_type2) != 0 && strcmp(c_type1,"") != 0){
             printf("error:%d: invalid operation: ASSIGN (mismatched types %s and %s)\n", yylineno , $1, $3);
         }
         else {
-            Symbol table1 = lookup_symbol(tmp_name);
-            if(strcmp(table1.type, "int") == 0){
+            if(strcmp(c_type1, "int") == 0){
                 codegen("istore %d\n", table1.address);
             }
-            if(strcmp(table1.type, "float") == 0){
+            if(strcmp(c_type1, "float") == 0){
                 codegen("fstore %d\n",table1.address);
             }
-            if(strcmp(table1.type, "string") == 0){
+            if(strcmp(c_type1, "string") == 0){
                 codegen("astore %d\n",table1.address);
             }
-            if(strcmp(table1.type, "bool") == 0){
+            if(strcmp(c_type1, "bool") == 0){
                 codegen("istore %d\n",table1.address);
-
             }
-        } 
+        }
         printf("ASSIGN\n");
     }
-    | PIDENT ADD_ASSIGN Arithmetic_stmt {
-        printf("ADD_ASSIGN\n");
+    | Assign_add_tmp Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("iadd\n");
+            codegen("istore %d\n", table1.address);            
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fadd\n");
+            codegen("fstore %d\n", table1.address);            
+        }
+    }
+    | Assign_sub_tmp Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("isub\n");
+            codegen("istore %d\n", table1.address);            
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fsub\n");
+            codegen("fstore %d\n", table1.address);            
+        }
+    }
+    | Assign_mul_tmp Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("imul\n");
+            codegen("istore %d\n", table1.address);            
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fmul\n");
+            codegen("fstore %d\n", table1.address);            
+        }
+    }
+    | Assign_quo_tmp Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("idiv\n");
+            codegen("istore %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fdiv\n");
+            codegen("fstore %d\n", table1.address);            
+        }
+    }
+    | Assign_rem_tmp Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("irem\n");
+            codegen("istore %d\n", table1.address);            
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("frem\n");
+            codegen("fstore %d\n", table1.address);          
+        }
     }
     | Const ADD_ASSIGN Arithmetic_stmt {
-        HAS_ERROR = true;
         printf("error:%d: cannot assign to %s\n",yylineno, $1);
         printf("ADD_ASSIGN\n");
     }
-    | PIDENT SUB_ASSIGN Arithmetic_stmt {
+    | AIDENT LBRACK Arithmetic_stmt RBRACK ASGN Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        printf("ASSIGN\n");
+        if(strcmp(c_type1, "int") == 0){
+            codegen("istore %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fstore %d\n",table1.address);
+        }
+        if(strcmp(c_type1, "string") == 0){
+            codegen("astore %d\n",table1.address);
+        }
+        if(strcmp(c_type1, "bool") == 0){
+            codegen("istore %d\n",table1.address);
+        }
+        if(strcmp(c_type1, "array") == 0){
+            if(strcmp(table1.element_type, "int") == 0){
+                codegen("iastore\n");
+            }
+            if(strcmp(table1.element_type, "float") == 0){
+                codegen("fastore\n");
+            }
+        }         
+    }
+;
+
+Assign_add_tmp
+    : AIDENT ADD_ASSIGN {
+        printf("ADD_ASSIGN\n");
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("iload %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fload %d\n",table1.address);
+        }
+    }
+Assign_sub_tmp
+    : AIDENT SUB_ASSIGN {
         printf("SUB_ASSIGN\n");
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("iload %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fload %d\n",table1.address);
+        }
     }
-    | PIDENT MUL_ASSIGN Arithmetic_stmt {
+Assign_mul_tmp
+    : AIDENT MUL_ASSIGN {
         printf("MUL_ASSIGN\n");
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("iload %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fload %d\n",table1.address);
+        }
+
     }
-    | PIDENT QUO_ASSIGN Arithmetic_stmt {
+Assign_quo_tmp
+    : AIDENT QUO_ASSIGN {
         printf("QUO_ASSIGN\n");
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("iload %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fload %d\n",table1.address);
+        }
     }
-    | PIDENT REM_ASSIGN Arithmetic_stmt {
+Assign_rem_tmp
+    : AIDENT REM_ASSIGN {
         printf("REM_ASSIGN\n");
-    }
-    | PIDENT LBRACK Arithmetic_stmt RBRACK ASGN Arithmetic_stmt {
-        printf("ASSIGN\n");        
+        char *c_type1 = convert_type($1);
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(c_type1, "int") == 0){
+            codegen("iload %d\n", table1.address);
+        }
+        if(strcmp(c_type1, "float") == 0){
+            codegen("fload %d\n",table1.address);
+        }
     }
 ;
 
 Arithmetic_stmt
     : Arithmetic_stmt OR AND_Arithmetic_stmt {
-        if(strcmp($3, "bool") != 0){
-            HAS_ERROR = true;
-            printf("error:%d: invalid operation: (operator OR not defined on %s)\n", yylineno, $3);
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        if(strcmp(c_type1, "bool") != 0){
+            printf("error:%d: invalid operation: (operator OR not defined on %s)\n", yylineno, c_type1);
         }
-        else if(strcmp($1, "bool") != 0){
-            HAS_ERROR = true;
-            printf("error:%d: invalid operation: (operator OR not defined on %s)\n", yylineno, $1);
+        else if(strcmp(c_type2, "bool") != 0){
+            printf("error:%d: invalid operation: (operator OR not defined on %s)\n", yylineno, c_type2);
         }
         printf("OR\n");
         if(strcmp($1, $3) == 0){
@@ -494,13 +799,14 @@ Arithmetic_stmt
 
 AND_Arithmetic_stmt
     : AND_Arithmetic_stmt AND Compare_Arithmetic_stmt {
-        if(strcmp($3, "bool") != 0){
-            HAS_ERROR = true;
-            printf("error:%d: invalid operation: (operator AND not defined on %s)\n", yylineno, $3);
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        // printf("converted type1 %s type2 %s \n", $1, $3);
+        if(strcmp(c_type1, "bool") != 0){
+            printf("error:%d: invalid operation: (operator AND not defined on %s)\n", yylineno, c_type1);
         }
-        else if(strcmp($1, "bool") != 0){
-            HAS_ERROR = true;
-            printf("error:%d: invalid operation: (operator AND not defined on %s)\n", yylineno, $1);
+        else if(strcmp(c_type2, "bool") != 0){
+            printf("error:%d: invalid operation: (operator AND not defined on %s)\n", yylineno, c_type2);
         }
         printf("AND\n");
         if(strcmp($1, $3) == 0){
@@ -513,8 +819,10 @@ AND_Arithmetic_stmt
 
 Compare_Arithmetic_stmt
     : Compare_Arithmetic_stmt GTR AS_Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
         printf("GTR\n");
-        if(strcmp($1, $3) == 0 && strcmp($1, "int") == 0){
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type1, "int") == 0){
             int tmp_label1 = label, tmp_label2 = label+1;
             codegen("isub\n");
             codegen("ifgt label%d\n", tmp_label1);
@@ -525,7 +833,7 @@ Compare_Arithmetic_stmt
             codegen("label%d :\n", tmp_label2);
             label += 2;
         }
-        if(strcmp($1, $3) == 0 && strcmp($1, "float") == 0){
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type1, "float") == 0){
             int tmp_label1 = label, tmp_label2 = label+1;
             codegen("fcmpl\n");
             codegen("iflt label%d\n", tmp_label1);
@@ -536,15 +844,16 @@ Compare_Arithmetic_stmt
             codegen("label%d :\n", tmp_label2);
             label += 2;
         }
-        
         $$ = "bool";
     }
     | Compare_Arithmetic_stmt LSS AS_Arithmetic_stmt {
         printf("LSS\n");
-        if(strcmp($1, $3) == 0 && strcmp($1, "int") == 0){
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type1, "int") == 0){
             int tmp_label1 = label, tmp_label2 = label+1;
             codegen("isub\n");
-            codegen("ifgt label%d\n", tmp_label1);
+            codegen("ifge label%d\n", tmp_label1);
             codegen("iconst_1\n");
             codegen("goto label%d\n", tmp_label2);
             codegen("label%d :\n", tmp_label1);
@@ -552,7 +861,7 @@ Compare_Arithmetic_stmt
             codegen("label%d :\n", tmp_label2);
             label += 2;
         }
-        if(strcmp($1, $3) == 0 && strcmp($1, "float") == 0){
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type2, "float") == 0){
             int tmp_label1 = label, tmp_label2 = label+1;
             codegen("fcmpl\n");
             codegen("iflt label%d\n", tmp_label1);
@@ -571,14 +880,64 @@ Compare_Arithmetic_stmt
     }
     | Compare_Arithmetic_stmt LEQ AS_Arithmetic_stmt {
         printf("LEQ\n");
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type1, "int") == 0){
+            int tmp_label1 = label, tmp_label2 = label+1;
+            codegen("isub\n");
+            codegen("ifle label%d\n", tmp_label1);
+            codegen("iconst_0\n");
+            codegen("goto label%d\n", tmp_label2);
+            codegen("label%d :\n", tmp_label1);
+            codegen("iconst_1\n");
+            codegen("label%d :\n", tmp_label2);
+            label += 2;
+        }
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type1, "float") == 0){
+            int tmp_label1 = label, tmp_label2 = label+1;
+            codegen("fcmpl\n");
+            codegen("iflt label%d\n", tmp_label1);
+            codegen("iconst_1\n");
+            codegen("goto label%d\n", tmp_label2);
+            codegen("label%d :\n", tmp_label1);
+            codegen("iconst_0\n");
+            codegen("label%d :\n", tmp_label2);
+            label += 2;
+        }
         $$ = "bool";
     }
     | Compare_Arithmetic_stmt EQL AS_Arithmetic_stmt {
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
         printf("EQL\n");
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type1, "int") == 0){
+            int tmp_label1 = label, tmp_label2 = label+1;
+            codegen("isub\n");
+            codegen("ifeq label%d\n", tmp_label1);
+            codegen("iconst_0\n");
+            codegen("goto label%d\n", tmp_label2);
+            codegen("label%d :\n", tmp_label1);
+            codegen("iconst_1\n");
+            codegen("label%d :\n", tmp_label2);
+            label += 2;
+        }
         $$ = "bool";
     }
     | Compare_Arithmetic_stmt NEQ AS_Arithmetic_stmt {
         printf("NEQ\n");
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        if(strcmp(c_type1, c_type2) == 0 && strcmp(c_type1, "int") == 0){
+            int tmp_label1 = label, tmp_label2 = label+1;
+            codegen("isub\n");
+            codegen("ifeq label%d\n", tmp_label1);
+            codegen("iconst_1\n");
+            codegen("goto label%d\n", tmp_label2);
+            codegen("label%d :\n", tmp_label1);
+            codegen("iconst_0\n");
+            codegen("label%d :\n", tmp_label2);
+            label += 2;
+        }
         $$ = "bool";
     }
     | AS_Arithmetic_stmt
@@ -586,27 +945,51 @@ Compare_Arithmetic_stmt
 
 AS_Arithmetic_stmt
     : AS_Arithmetic_stmt ADD MQR_Arithmetic_stmt {
-        if(strcmp($1, $3) != 0){
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        Symbol table1 = lookup_symbol($1);
+        Symbol table2 = lookup_symbol($3);
+        if(strcmp(c_type1, "array") == 0){
+            c_type1 = table1.element_type;
+        }
+        else if(strcmp(c_type2, "array") == 0){
+            c_type2 = table2.element_type;
+        }
+
+        if(strcmp(c_type1, c_type2) != 0){
             HAS_ERROR = true;
             printf("error:%d: invalid operation: ADD (mismatched types %s and %s)\n", yylineno , $1, $3);
         }
-        if(strcmp($1, "int") == 0 && strcmp($3, "int") == 0){
+        // printf("converted name1 %s,  name2 %s \n", table1.name, table2.name);
+        if(strcmp(c_type1, "int") == 0 && strcmp(c_type2, "int") == 0){
             codegen("iadd\n");
         }
-        if(strcmp($1, "float") == 0 && strcmp($3, "float") == 0){
+        if(strcmp(c_type1, "float") == 0 && strcmp(c_type2, "float") == 0){
             codegen("fadd\n");
         }
         printf("ADD\n");
     }
     | AS_Arithmetic_stmt SUB MQR_Arithmetic_stmt {
-        if(strcmp($1, $3) != 0){
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        Symbol table1 = lookup_symbol($1);
+        Symbol table2 = lookup_symbol($3);
+        if(strcmp(c_type1, "array") == 0){
+            c_type1 = table1.element_type;
+        }
+        else if(strcmp(c_type2, "array") == 0){
+            c_type2 = table2.element_type;
+        }
+        // printf("converted name1 %s,  name2 %s \n", c_type1, c_type2);
+
+        if(strcmp(c_type1, c_type2) != 0){
             HAS_ERROR = true;
             printf("error:%d: invalid operation: SUB (mismatched types %s and %s)\n", yylineno , $1, $3);
         }
-        if(strcmp($1, "int") == 0 && strcmp($3, "int") == 0){
+        if(strcmp(c_type1, "int") == 0 && strcmp(c_type2, "int") == 0){
             codegen("isub\n");
         }
-        if(strcmp($1, "float") == 0 && strcmp($3, "float") == 0){
+        if(strcmp(c_type1, "float") == 0 && strcmp(c_type2, "float") == 0){
             codegen("fsub\n");
         }
         printf("SUB\n");
@@ -616,24 +999,46 @@ AS_Arithmetic_stmt
 
 MQR_Arithmetic_stmt
     : MQR_Arithmetic_stmt MUL Unary_stmt {
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        Symbol table1 = lookup_symbol($1);
+        Symbol table2 = lookup_symbol($3);
+        if(strcmp(c_type1, "array") == 0){
+            c_type1 = table1.element_type;
+        }
+        else if(strcmp(c_type2, "array") == 0){
+            c_type2 = table2.element_type;
+        }
         printf("MUL\n");
-        if(strcmp($1, "int") == 0 && strcmp($3, "int") == 0){
+        if(strcmp(c_type1, "int") == 0 && strcmp(c_type2, "int") == 0){
             codegen("imul\n");
         }
-        if(strcmp($1, "float") == 0 && strcmp($3, "float") == 0){
+        if(strcmp(c_type1, "float") == 0 && strcmp(c_type2, "float") == 0){
             codegen("fmul\n");
         }
     }
     | MQR_Arithmetic_stmt QUO Unary_stmt {
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
+        Symbol table1 = lookup_symbol($1);
+        Symbol table2 = lookup_symbol($3);
+        if(strcmp(c_type1, "array") == 0){
+            c_type1 = table1.element_type;
+        }
+        else if(strcmp(c_type2, "array") == 0){
+            c_type2 = table2.element_type;
+        }
         printf("QUO\n");
-        if(strcmp($1, "int") == 0 && strcmp($3, "int") == 0){
+        if(strcmp(c_type1, "int") == 0 && strcmp(c_type2, "int") == 0){
             codegen("idiv\n");
         }
-        if(strcmp($1, "float") == 0 && strcmp($3, "float") == 0){
+        if(strcmp(c_type1, "float") == 0 && strcmp(c_type2, "float") == 0){
             codegen("fdiv\n");
         }
     }
     | MQR_Arithmetic_stmt REM Unary_stmt {
+        char *c_type1 = convert_type($1);
+        char *c_type2 = convert_type($3);
         if(strcmp($3, "float") == 0){
             HAS_ERROR = true;
             printf("error:%d: invalid operation: (operator REM not defined on %s)\n", yylineno, $3);
@@ -643,10 +1048,10 @@ MQR_Arithmetic_stmt
             printf("error:%d: invalid operation: (operator REM not defined on %s)\n", yylineno, $1);
         }
         printf("REM\n");
-        if(strcmp($1, "int") == 0 && strcmp($3, "int") == 0){
+        if(strcmp(c_type1, "int") == 0 && strcmp(c_type2, "int") == 0){
             codegen("irem\n");
         }
-        if(strcmp($1, "float") == 0 && strcmp($3, "float") == 0){
+        if(strcmp(c_type1, "float") == 0 && strcmp(c_type2, "float") == 0){
             codegen("frem\n");
         }
     }
@@ -680,6 +1085,13 @@ Unary_stmt
 
 Brak_stmt
     : PIDENT LBRACK Arithmetic_stmt RBRACK {
+        Symbol table1 = lookup_symbol($1);
+        if(strcmp(table1.element_type, "int") == 0){
+            codegen("iaload\n");
+        }
+        else if(strcmp(table1.element_type, "float") == 0){
+            codegen("faload\n");
+        }
         $$ = $1;
     }
     | Paren_stmt
@@ -687,6 +1099,7 @@ Brak_stmt
 
 Paren_stmt
     : LPAREN Arithmetic_stmt RPAREN {
+        
         $$ = $2;
     }
     | Literal
@@ -694,8 +1107,10 @@ Paren_stmt
 
 Execution_stmt
     : PRINT LPAREN Arithmetic_stmt RPAREN {
+        char *c_type1 = convert_type($3);
+        Symbol table1 = lookup_symbol($3);
         printf("PRINT %s\n", $3);
-        if(strcmp($3, "bool") == 0){
+        if(strcmp(c_type1, "bool") == 0){
             int tmp_label1 = label, tmp_label2 = label+1;
             codegen("ifne label%d\n", tmp_label1);
             codegen("ldc \"false\"\n");
@@ -704,25 +1119,32 @@ Execution_stmt
             codegen("ldc \"true\"\n");
             codegen("label%d:\n", tmp_label2);
             label += 2;
-        }        
+        }      
         codegen("getstatic java/lang/System/out Ljava/io/PrintStream;\n");
         codegen("swap\n");
-        if(strcmp($3, "int") == 0){
+        if(strcmp(c_type1, "int") == 0){
             codegen("invokevirtual java/io/PrintStream/print(I)V\n");   
         }
-        if(strcmp($3, "string") == 0){
+        if(strcmp(c_type1, "string") == 0){
             codegen("invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V\n");   
         }
-        if(strcmp($3, "float") == 0){
+        if(strcmp(c_type1, "float") == 0){
             codegen("invokevirtual java/io/PrintStream/print(F)V\n");   
         }
-        if(strcmp($3, "bool") == 0){
+        if(strcmp(c_type1, "bool") == 0){
             codegen("invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V\n");   
+        }
+        if(strcmp(c_type1, "array") == 0){
+            if(strcmp(table1.element_type, "int") == 0){
+                codegen("invokevirtual java/io/PrintStream/print(I)V\n");   
+            }
+            else if(strcmp(table1.element_type, "float") == 0){
+                codegen("invokevirtual java/io/PrintStream/print(F)V\n");   
+            }
         }
         $$ = $3;
     }
 ;
-
 
 %%
 
@@ -745,8 +1167,6 @@ int main(int argc, char *argv[])
     codegen(".limit stack 100\n");
     codegen(".limit locals 100\n");
     INDENT++;
-
-
     create_symbol();
 
     yyparse();
@@ -858,3 +1278,20 @@ static void dump_symbol(){
         symbol_index[scope_number] = -1;
 
 }
+
+static char* convert_type(char *source){
+    if(strcmp(source, "int") == 0 || strcmp(source, "float") == 0 || strcmp(source, "bool") == 0
+        || strcmp(source, "string") == 0){
+            return source;
+    }
+    else if(strcmp(source, "array") == 0){
+        Symbol table1 = lookup_symbol(source);
+        return table1.element_type;
+    }
+    else {
+        Symbol table1 = lookup_symbol(source);
+        return table1.type;
+    }
+    
+}
+

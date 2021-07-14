@@ -79,23 +79,23 @@ newline		[\n]
 "*="        { return MUL_ASSIGN; }
 "/="        { return QUO_ASSIGN; }
 "%="        { return REM_ASSIGN; }
-{inumber}   { yylval.i_val = atoi(yytext);
-                return INT_LIT;
-            }
 "true"  { yylval.s_val = "TRUE";
             return BOOL_LIT;
         }
 "false" { yylval.s_val = "FALSE";
             return BOOL_LIT;
         }
+{inumber}   { yylval.i_val = atoi(yytext);
+                return INT_LIT;
+            }
 {fnumber}   { yylval.f_val = atof(yytext);
                 return FLOAT_LIT;
             }
 {id}        { yylval.s_val = strdup(yytext);
-              return IDENT;
+                return IDENT;
             }
 [;]         { return SEMICOLON; }
-[\n]        { ; }
+[\n]        {;}
 <<EOF>>     { static int once = 0;
                 if (once++) {
                     yyterminate();
